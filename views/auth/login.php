@@ -1,5 +1,4 @@
 <?php
-// Trang login
 $error = Message::get('error');
 ?>
 <!DOCTYPE html>
@@ -7,20 +6,20 @@ $error = Message::get('error');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập - Agile Manager</title>
+  <title>Đăng nhập – BookStore</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
-<body class="h-full bg-gradient-to-br from-indigo-50 via-white to-indigo-100 flex items-center justify-center">
+<body class="h-full bg-gradient-to-br from-green-50 via-white to-green-100 flex items-center justify-center">
 
-  <div class="w-full max-w-md">
+  <div class="w-full max-w-md px-4">
     <!-- Logo -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4 shadow-lg">
-        <i data-lucide="layout-dashboard" class="w-8 h-8 text-white"></i>
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-[#4CAF50] rounded-2xl mb-4 shadow-lg">
+        <i data-lucide="book-open" class="w-8 h-8 text-white"></i>
       </div>
-      <h1 class="text-2xl font-bold text-gray-900">Agile Manager</h1>
-      <p class="text-sm text-gray-500 mt-1">Hệ thống quản lý nội bộ</p>
+      <h1 class="text-2xl font-bold text-gray-900">Book<span class="text-[#4CAF50]">Store</span></h1>
+      <p class="text-sm text-gray-500 mt-1">Nhà sách trực tuyến uy tín</p>
     </div>
 
     <!-- Card -->
@@ -41,9 +40,9 @@ $error = Message::get('error');
           <div class="relative">
             <i data-lucide="mail" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
             <input type="email" name="email" required
-              placeholder="admin@example.com"
+              placeholder="email@example.com"
               value="<?= old('email') ?>"
-              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4CAF50] text-sm">
           </div>
         </div>
 
@@ -54,19 +53,24 @@ $error = Message::get('error');
             <i data-lucide="lock" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
             <input type="password" name="password" required
               placeholder="••••••••"
-              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4CAF50] text-sm">
           </div>
         </div>
 
         <button type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition duration-150 flex items-center justify-center gap-2">
+          class="w-full bg-[#4CAF50] hover:bg-[#43A047] text-white font-semibold py-2.5 rounded-lg transition duration-150 flex items-center justify-center gap-2">
           <i data-lucide="log-in" class="w-5 h-5"></i>
           Đăng nhập
         </button>
       </form>
+
+      <p class="text-center text-sm text-gray-500 mt-6">
+        Chưa có tài khoản?
+        <a href="<?= BASE_URL ?>?act=register" class="text-[#4CAF50] font-medium hover:underline">Đăng ký ngay</a>
+      </p>
     </div>
 
-    <p class="text-center text-xs text-gray-400 mt-6">© <?= date('Y') ?> Agile Manager</p>
+    <p class="text-center text-xs text-gray-400 mt-6">© <?= date('Y') ?> BookStore. Tất cả quyền được bảo lưu.</p>
   </div>
 
   <script>lucide.createIcons();</script>

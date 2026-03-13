@@ -1,92 +1,89 @@
-# 🗂️ Cấu Trúc Project — Quan_li_Agile
+# 🗂️ Cấu Trúc Project — Website Bán Sách
 
 ```
-Quan_li_Agile/
+website-ban-sach/
 │
-├── 📄 index.php                     # Entry point duy nhất của ứng dụng
-│                                    # Load config → commons → router
+├── 📄 index.php                          # Entry point duy nhất
+│                                         # Load: config → commons → router
 │
-├── 📄 db.sql                        # Script tạo database + dữ liệu mẫu
-│                                    # Import vào phpMyAdmin để bắt đầu
-│
-├── 📄 .gitignore                    # Bỏ qua: config/env.php, uploads/*
-│
-├── 📄 README.md                     # Hướng dẫn cài đặt và phát triển
+├── 📄 db.sql                             # Script tạo database + dữ liệu mẫu
+├── 📄 .gitignore
+├── 📄 README.md
+├── 📄 STRUCTURE.md
 │
 ├── 📁 config/
-│   ├── env.example.php              # ✅ COMMIT — Mẫu cấu hình môi trường
-│   ├── env.php                      # ❌ KHÔNG COMMIT — Cấu hình thực tế (local)
-│   │                                # Tạo từ env.example.php
-│   └── autoload.php                 # SPL autoload: tự động require class
-│                                    # Quét: controllers/, controllers/admin/, models/
+│   ├── env.example.php                   # ✅ COMMIT — Mẫu cấu hình
+│   ├── env.php                           # ❌ KHÔNG COMMIT — Cấu hình local
+│   └── autoload.php                      # SPL autoload: quét controllers/, models/
 │
 ├── 📁 commons/
-│   ├── function.php                 # Hàm helper dùng chung toàn hệ thống
-│   │                                # connectDB, validate, redirect, uploadFile...
-│   ├── message.php                  # Class Message — Flash session messages
-│   │                                # Message::set('success', 'msg')
-│   │                                # Message::get('success')
-│   └── helperTree.php               # Helper cây danh mục đệ quy
-│                                    # buildTree, renderCategory, renderOption
+│   ├── function.php                      # Hàm helper dùng chung
+│   ├── message.php                       # Class Message — Flash messages
+│   └── helperTree.php                    # Helper cây danh mục đệ quy
 │
 ├── 📁 routers/
-│   └── web.php                      # Định nghĩa tất cả routes
-│                                    # Dùng match($act) — ?act=ten-route
-│                                    # Thêm route mới vào đây
+│   └── web.php                           # Tất cả routes — match($act)
+│                                         # ⚠️ Thêm route mới tại đây
 │
 ├── 📁 assets/
-│   ├── common.js                    # JS toggle submenu sidebar
-│   └── lucide.js                    # Shim file (icons load từ CDN)
+│   └── common.js                         # JS dùng chung
 │
-├── 📁 models/                       # Tầng dữ liệu — kết nối database qua PDO
-│   └── UserModel.php                # CRUD bảng users
+├── 📁 uploads/                           # ❌ KHÔNG COMMIT — File upload
+│
+├── 📁 models/                            # Tầng dữ liệu (PDO)
+│   └── UserModel.php
 │   # Thêm: BookModel.php, CategoryModel.php, OrderModel.php...
 │
-├── 📁 controllers/                  # Tầng xử lý logic
-│   ├── AuthController.php           # Đăng nhập / Đăng xuất
-│   ├── ProfileController.php        # Xem/sửa profile, đổi mật khẩu
-│   └── admin/                       # Controllers chỉ dành cho Admin
-│       └── DashboardController.php  # Trang tổng quan
-│       # Thêm: BookController.php, CategoryController.php...
+├── 📁 controllers/
+│   ├── AuthController.php                # Đăng nhập / Đăng xuất (tạm tắt)
+│   ├── admin/                            # Controllers Admin
+│   │   └── DashboardController.php
+│   │   # Thêm: BookController.php, OrderController.php...
+│   └── customer/                         # Controllers Khách hàng
+│       └── HomeController.php
+│       # Thêm: BookController.php, CartController.php...
 │
-└── 📁 views/                        # Tầng giao diện (HTML + PHP)
+└── 📁 views/                             # Tầng giao diện
     │
-    ├── 📁 components/               # Layout dùng chung — include trong mọi trang
-    │   ├── header.php               # <!DOCTYPE html>, <head>, top bar, navbar
-    │   │                            # Load: Tailwind CDN, Lucide CDN, common.js
-    │   ├── sidebar.php              # Sidebar menu — Thêm menu mới ở đây
-    │   └── footer.php               # </body>, Toast messages, lucide.createIcons()
+    ├── 📁 components/                    # Layout dùng chung — include mọi trang
+    │   │
+    │   ├── ── ADMIN LAYOUT ──────────────────────────────────────────
+    │   ├── header.php                    # <!DOCTYPE>, <head>, top bar admin
+    │   │                                 # Mở: <html>, <body>, <div.ml-56>
+    │   ├── sidebar.php                   # Sidebar admin (dark #1B2537 / #4CAF50)
+    │   │                                 # ⚠️ Thêm menu admin mới tại đây
+    │   ├── footer.php                    # Đóng wrapper + Toast messages + </html>
+    │   │
+    │   └── ── CUSTOMER LAYOUT ───────────────────────────────────────
+    │   ├── navbar.php                    # <!DOCTYPE>, <head>, navbar khách hàng
+    │   │                                 # Mở: <html>, <body>, <nav>
+    │   └── customer_footer.php           # Footer 4 cột + </html>
     │
     ├── 📁 auth/
-    │   └── login.php                # Trang đăng nhập (không cần header/sidebar)
+    │   └── login.php                     # Trang đăng nhập (BookStore theme)
     │
-    ├── 📁 admin/                    # Trang quản trị — chỉ Admin truy cập
-    │   └── dashboard.php            # Dashboard với stat cards
-    │   # Thêm: books/, categories/, orders/, vouchers/...
+    ├── 📁 admin/                         # Trang quản trị
+    │   └── dashboard.php                 # Dashboard: stats + top books + orders
+    │   # Thêm: books.php, categories.php, orders.php, vouchers.php...
     │
-    ├── 📁 shared/                   # Trang dùng chung (Admin & Khách hàng)
-    │   ├── profile.php              # Xem thông tin cá nhân
-    │   └── profile_edit.php         # Chỉnh sửa thông tin + upload avatar
+    ├── 📁 customer/                      # Trang khách hàng
+    │   └── home.php                      # Trang chủ: banner, flash sale, sections
+    │   # Thêm: books.php, book_detail.php, cart.php, checkout.php...
     │
-    ├── forbidden.php                # Trang 403 — Không có quyền truy cập
-    └── notFound.php                 # Trang 404 — Không tìm thấy
+    ├── forbidden.php                     # 403 — Không có quyền
+    └── notFound.php                      # 404 — Không tìm thấy
 ```
 
-## 📦 Quy trình làm việc với Git
+---
+
+## 📦 Quy trình Git
 
 ```bash
-# 1. Tạo branch tính năng mới
 git checkout -b feature/ten-tinh-nang
-
-# 2. Làm việc, commit thường xuyên
 git add .
-git commit -m "feat: thêm CRUD quản lý sách"
-
-# 3. Push lên và tạo Pull Request
+git commit -m "feat: mô tả ngắn gọn"
 git push origin feature/ten-tinh-nang
+# → Tạo Pull Request trên GitHub
 ```
 
-> **Lưu ý quan trọng:**
-> - ❌ **KHÔNG commit** `config/env.php`
-> - ✅ **Chỉ commit** `config/env.example.php` khi có thay đổi cấu hình
-> - ❌ **KHÔNG commit** file trong `uploads/`
+> ❌ KHÔNG commit: `config/env.php` | `uploads/*`

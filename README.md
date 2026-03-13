@@ -1,110 +1,88 @@
-# 📚 Quan_li_Agile — Website Bán Sách
+# 📚 Website Bán Sách — PHP MVC Base Code
 
-> **Base code PHP MVC thuần**
+> **Base code PHP MVC thuần** — Giao diện 2 role: **Khách hàng** & **Admin (BookAdmin)**
+> Thiết kế theo Figma AI project. Tailwind CSS + Lucide Icons.
 
 ---
 
-## 🚀 Hướng dẫn cài đặt nhanh
+## 🚀 Cài đặt nhanh
 
 ### 1. Clone project
-
 ```bash
 git clone <repository-url>
-cd Quan_li_Agile
+cd website-ban-sach
 ```
 
-### 2. Tạo file cấu hình môi trường
-
-Sao chép file mẫu và điền thông tin thực tế:
-
+### 2. Tạo file cấu hình
 ```bash
-# Copy file mẫu
 cp config/env.example.php config/env.php
 ```
 
-Mở `config/env.php` và sửa các giá trị:
-
+Mở `config/env.php` và chỉnh:
 ```php
-define('BASE_URL', 'http://quan-li-agile.test/');  // URL local của bạn
-define('DB_NAME',     'quan_li_agile');              // Tên database
-define('DB_USERNAME', 'root');                       // Username MySQL
-define('DB_PASSWORD', '');                           // Password MySQL
+define('BASE_URL',    'http://localhost/website-ban-sach/');
+define('DB_NAME',     'website_ban_sach');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
 ```
 
-> ⚠️ **Lưu ý:** File `config/env.php` đã bị `.gitignore` — **KHÔNG** được commit lên Git.
-> Chỉ `config/env.example.php` mới được commit.
+> ⚠️ `config/env.php` đã bị `.gitignore` — **KHÔNG** commit file này.
 
-### 3. Tạo Database
+### 3. Import Database
+Mở **phpMyAdmin** → Import `db.sql`
 
-Mở **phpMyAdmin** → Import file `db.sql`
+### 4. Truy cập
+| URL | Trang |
+|---|---|
+| `http://localhost/website-ban-sach/` | Trang chủ khách hàng |
+| `http://localhost/website-ban-sach/?act=admin-dashboard` | Admin Dashboard |
 
-Hoặc chạy lệnh:
-```bash
-mysql -u root -p < db.sql
-```
-
-### 4. Tài khoản mẫu
-
-| Email | Mật khẩu | Vai trò |
-|---|---|---|
-| `admin@example.com` | `admin123` | Admin |
-
-> Để đổi mật khẩu, chạy PHP:
-> ```php
-> echo password_hash('mật_khẩu_mới', PASSWORD_DEFAULT);
-> ```
-> Rồi cập nhật bảng `users` trong database.
-
-### 5. Cấu hình Virtual Host (Laragon)
-
-- Đặt domain: `quan-li-agile.test`
-- Trỏ về thư mục: `c:\laragon\www\Quan_li_Agile`
-- Mở trình duyệt: `http://quan-li-agile.test`
+> 🔒 **Auth tạm thời tắt** — truy cập trực tiếp không cần đăng nhập (sẽ bật lại sau).
 
 ---
 
-## 🏗️ Kiến trúc hệ thống
-
-Xem file [`STRUCTURE.md`](STRUCTURE.md) để hiểu chi tiết cách tổ chức code.
-
----
-
-## 🔧 Các hàm helper có sẵn
+## 🔧 Helper functions
 
 | Hàm | Mô tả |
 |---|---|
-| `connectDB()` | Kết nối PDO đến database |
+| `connectDB()` | Kết nối PDO tới database |
 | `redirect('act')` | Chuyển hướng đến `?act=` |
 | `validate($data, $rules)` | Validation form |
-| `old('field')` | Lấy giá trị cũ sau khi validation lỗi |
-| `uploadFile($file, $folder)` | Upload file lên `uploads/` |
-| `deleteFile($path)` | Xóa file khỏi `uploads/` |
-| `requireAdmin()` | Chặn nếu không phải Admin |
-| `checkLogin()` | Chặn nếu chưa đăng nhập |
+| `old('field')` | Lấy giá trị cũ khi validation lỗi |
+| `uploadFile($file, $folder)` | Upload file vào `uploads/` |
+| `deleteFile($path)` | Xóa file trong `uploads/` |
+| `requireAdmin()` | Chặn nếu không phải Admin *(tạm tắt)* |
+| `checkLogin()` | Chặn nếu chưa đăng nhập *(tạm tắt)* |
 | `timeAgo($datetime)` | "2 giờ trước", "3 ngày trước"... |
 | `Message::set('success', 'msg')` | Set flash message |
-| `Message::get('success')` | Lấy flash message (tự xóa sau khi đọc) |
+| `Message::get('success')` | Lấy flash message (tự xóa sau đọc) |
 | `dd($data)` | Debug dump + die |
 
 ---
 
-## 📐 Quy tắc đặt tên
+## � Quy trình Git
 
-| Thành phần | Quy tắc | Ví dụ |
-|---|---|---|
-| Model | `PascalCase` + `Model` | `BookModel`, `CategoryModel` |
-| Controller | `PascalCase` + `Controller` | `BookController` |
-| View folder | `kebab-case` | `views/admin/books/` |
-| Route (act) | `kebab-case` | `books`, `book-create`, `book-update` |
-| DB table | `snake_case`, số nhiều | `books`, `order_items` |
-| DB column | `snake_case` | `created_at`, `category_id` |
+```bash
+# Tạo branch tính năng
+git checkout -b feature/ten-tinh-nang
+
+# Commit
+git add .
+git commit -m "feat: thêm quản lý sách"
+
+# Push & tạo Pull Request
+git push origin feature/ten-tinh-nang
+```
+
+> - ❌ **KHÔNG commit** `config/env.php` và `uploads/*`
+> - ✅ **Chỉ commit** `config/env.example.php` khi thay đổi cấu hình
 
 ---
 
-## 🎨 UI / CSS
+## 🎨 UI Stack
 
-- **Framework:** Tailwind CSS (CDN)
-- **Icons:** Lucide Icons (CDN)
-- Không có file CSS riêng — dùng utility classes của Tailwind trực tiếp trong HTML
-- Tham khảo [Tailwind Docs](https://tailwindcss.com/docs) | [Lucide Icons](https://lucide.dev/icons)
-
+- **CSS:** Tailwind CSS (CDN) — dùng utility class trực tiếp trong HTML
+- **Icons:** Lucide Icons (CDN) — `data-lucide="ten-icon"`
+- **Màu Admin:** `#1B2537` (sidebar) / `#4CAF50` (accent)
+- **Màu Customer:** `#4CAF50` (primary) / `#FFC107` (secondary)
+- Tham khảo: [Tailwind Docs](https://tailwindcss.com/docs) | [Lucide Icons](https://lucide.dev/icons)

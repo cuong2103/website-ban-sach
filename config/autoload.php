@@ -4,6 +4,7 @@ spl_autoload_register(function ($className) {
   $paths = [
     './controllers/',
     './controllers/admin/',
+    './controllers/customer/',
     './models/',
   ];
   // Tìm và load file
