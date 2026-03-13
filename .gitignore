@@ -1,0 +1,16 @@
+# ========================================
+# .gitignore — Quan_li_Agile
+# ========================================
+
+# ❌ File môi trường thực tế — KHÔNG commit
+# Chỉ commit env.example.php
+config/env.php
+
+# ❌ File upload của người dùng — KHÔNG commit
+uploads/*
+!uploads/.gitkeep
+
+# ❌ Các file hệ thống
+.DS_Store
+Thumbs.db
+*.log
