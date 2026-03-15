@@ -151,6 +151,10 @@ function validate($data, $rules)
                         }
                     }
                 }
+            } elseif ($rule === 'phone') {
+                if (isset($data[$field]) && !preg_match('/^(0|\+84)[0-9]{9,10}$/', $data[$field])) {
+                    $errors[$field][] = "Trường này phải là số điện thoại hợp lệ.";
+                }
             } elseif ($rule === 'time') {
                 if (isset($data[$field]) && !preg_match('/^\d{1,2}:\d{2}$/', $data[$field])) {
                     $errors[$field][] = "Trường $field phải có định dạng giờ HH:MM.";

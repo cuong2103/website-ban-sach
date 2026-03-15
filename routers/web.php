@@ -2,20 +2,21 @@
 session_start();
 $act = $_GET['act'] ?? '/';
 
-// TODO: Bật lại khi làm module đăng nhập/đăng ký
-// if (!in_array($act, ['login', 'check-login', 'logout', 'home', 'register'])) {
-//   checkLogin();
-// }
+// Whitelist các route không cần login
+if (!in_array($act, ['/', 'login', 'check-login', 'logout', 'home', 'register', 'check-register'])) {
+  checkLogin();
+}
 
 match ($act) {
   // ─── Home mặc định → trang chủ khách hàng ─────────────────────────
   '/' => (new HomeController())->home(),
 
-  // ─── Auth (tạm thời vô hiệu – làm sau cùng) ───────────────────────
-  // 'login'       => (new AuthController())->formLogin(),
-  // 'check-login' => (new AuthController())->login(),
-  // 'logout'      => (new AuthController())->logout(),
-  // 'register'    => require_once './views/auth/register.php',
+  // ─── Auth ───────────────────────────────────────────────────────
+  'login'         => (new AuthController())->formLogin(),
+  'check-login'   => (new AuthController())->login(),
+  'register'      => (new AuthController())->formRegister(),
+  'check-register' => (new AuthController())->register(),
+  'logout'        => (new AuthController())->logout(),
 
   // ─── Customer ─────────────────────────────────────────────────────
   'home' => (new HomeController())->home(),
