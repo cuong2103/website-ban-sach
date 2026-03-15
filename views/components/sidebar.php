@@ -47,6 +47,13 @@ $inactiveClass = 'text-gray-400 hover:bg-white/10 hover:text-white';
       <span class="whitespace-nowrap">Flash Sale</span>
     </a>
 
+    <!-- Quản lý kho hàng -->
+    <a href="<?= BASE_URL ?>admin-inventories"
+      class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive(['admin-inventories', 'admin-inventories-create', 'admin-inventories-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
+      <i data-lucide="package" class="w-4 h-4 shrink-0"></i>
+      <span class="whitespace-nowrap">Kho Hàng</span>
+    </a>
+
   </nav>
 
   <!-- Bottom: Đăng xuất -->

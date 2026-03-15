@@ -54,6 +54,9 @@ match ($act) {
   'admin-flash-sales-add-item' => (new FlashSaleController())->addItem(),
   'admin-flash-sales-remove-item' => (new FlashSaleController())->removeItem(),
 
+  // ─── Admin: Inventory Management (View Only) ───────────────────────────────────
+  'admin-inventories' => (new InventoryController())->list(),
+
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================
