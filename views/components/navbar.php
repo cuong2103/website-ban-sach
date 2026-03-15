@@ -1,5 +1,17 @@
 <?php
 $currentAct = $_GET['act'] ?? 'home';
+$isLoggedIn = isset($_SESSION['currentUser']);
+$navbarCartCount = 0;
+
+if ($isLoggedIn) {
+    $currentUser = $_SESSION['currentUser'] ?? null;
+    $currentUserId = (int)($currentUser['id'] ?? 0);
+
+    if ($currentUserId > 0) {
+        $navbarCartModel = new CartModel();
+        $navbarCartCount = $navbarCartModel->getItemCount($currentUserId);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
@@ -89,10 +101,7 @@ $currentAct = $_GET['act'] ?? 'home';
                 </div>
 
                 <div class="flex items-center gap-2 ml-auto md:ml-0">
-                    <?php
-        $isLoggedIn = isset($_SESSION['currentUser']);
-        $currentUser = $_SESSION['currentUser'] ?? null;
-        ?>
+                    <?php $currentUser = $_SESSION['currentUser'] ?? null; ?>
 
                     <?php if ($isLoggedIn): ?>
                     <a href="<?= BASE_URL ?>?act=account"
@@ -104,8 +113,8 @@ $currentAct = $_GET['act'] ?? 'home';
                         class="relative flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-[#4CAF50] hover:bg-gray-50 rounded-lg transition-colors">
                         <i data-lucide="shopping-cart" class="w-[18px] h-[18px]"></i>
                         <span
-                            class="absolute -top-1 -right-1 bg-[#FFC107] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium hidden"
-                            id="cart-badge">0</span>
+                            class="absolute -top-1 -right-1 bg-[#FFC107] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium <?= $navbarCartCount > 0 ? '' : 'hidden' ?>"
+                            id="cart-badge"><?= $navbarCartCount ?></span>
                         <span class="hidden sm:block">Giỏ hàng</span>
                     </a>
                     <?php else: ?>

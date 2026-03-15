@@ -21,6 +21,15 @@ match ($act) {
   // ─── Customer ─────────────────────────────────────────────────────
   'home' => (new HomeController())->home(),
   'books' => (new BookController())->list(),
+  'cart' => (new CartController())->index(),
+  'cart-add' => (new CartController())->add(),
+  'cart-update' => (new CartController())->update(),
+  'cart-remove' => (new CartController())->remove(),
+  'cart-apply-voucher' => (new CartController())->applyVoucher(),
+  'cart-clear-voucher' => (new CartController())->clearVoucher(),
+  'checkout' => (new CartController())->checkout(),
+  'checkout-place' => (new CartController())->placeOrder(),
+  'checkout-success' => (new CartController())->success(),
 
   // ─── Admin ────────────────────────────────────────────────────────
   'admin-dashboard' => (new DashboardController())->Dashboard(),

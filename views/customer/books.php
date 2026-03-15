@@ -242,11 +242,7 @@ if ($debug):
 lucide.createIcons();
 
 function addToCart(bookId) {
-    // TODO: Implement add to cart functionality
-    // For now, just show an alert or redirect to cart page
-    // You can replace this with actual cart logic
-    alert('Chức năng giỏ hàng đang được phát triển');
-    // Example: window.location.href = '<?= BASE_URL ?>?act=cart&add=' + bookId;
+    window.location.href = '<?= BASE_URL ?>?act=cart-add&id=' + bookId;
 }
 </script>
 </body>
