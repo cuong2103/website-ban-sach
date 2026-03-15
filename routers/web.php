@@ -12,11 +12,11 @@ match ($act) {
   '/' => (new HomeController())->home(),
 
   // ─── Auth ───────────────────────────────────────────────────────
-  'login'         => (new AuthController())->formLogin(),
-  'check-login'   => (new AuthController())->login(),
-  'register'      => (new AuthController())->formRegister(),
+  'login' => (new AuthController())->formLogin(),
+  'check-login' => (new AuthController())->login(),
+  'register' => (new AuthController())->formRegister(),
   'check-register' => (new AuthController())->register(),
-  'logout'        => (new AuthController())->logout(),
+  'logout' => (new AuthController())->logout(),
 
   // ─── Customer ─────────────────────────────────────────────────────
   'home' => (new HomeController())->home(),
@@ -36,11 +36,19 @@ match ($act) {
   // ─── Admin ────────────────────────────────────────────────────────
   'admin-dashboard' => (new DashboardController())->Dashboard(),
 
+  // ─── Admin: Category Management ─────────────────────────────────────
+  'admin-categories' => (new CategoryController())->list(),
+  'admin-categories-create' => (new CategoryController())->formCreate(),
+  'admin-categories-store' => (new CategoryController())->create(),
+  'admin-categories-edit' => (new CategoryController())->formEdit(),
+  'admin-categories-update' => (new CategoryController())->update(),
+  'admin-categories-delete' => (new CategoryController())->delete(),
+
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================
 
   // ─── Error pages ──────────────────────────────────────────────────
-  '403'   => require_once './views/forbidden.php',
+  '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };

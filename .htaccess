@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /agile/website-ban-sach/
+    
+    # Nếu file hoặc folder thực tế tồn tại thì không rewrite
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Rewrite tất cả request tới index.php với parameter act
+    RewriteRule ^(.+)/?$ index.php?act=$1 [QSA,L]
+</IfModule>

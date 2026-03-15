@@ -79,10 +79,10 @@ require_once './views/components/sidebar.php';
         <?php
         $topBooks = [
           ['rank' => 1, 'title' => 'Đắc Nhân Tâm', 'author' => 'Dale Carnegie', 'price' => '68.000 ₫', 'sold' => 1240],
-          ['rank' => 2, 'title' => 'Nhà Giả Kim',  'author' => 'Paulo Coelho',   'price' => '79.000 ₫', 'sold' => 987],
-          ['rank' => 3, 'title' => 'Tôi Tài Giỏi', 'author' => 'Adam Khoo',      'price' => '85.000 ₫', 'sold' => 854],
-          ['rank' => 4, 'title' => 'Sapiens',       'author' => 'Yuval Noah',     'price' => '120.000 ₫','sold' => 732],
-          ['rank' => 5, 'title' => 'Atomic Habits', 'author' => 'James Clear',    'price' => '95.000 ₫', 'sold' => 698],
+          ['rank' => 2, 'title' => 'Nhà Giả Kim', 'author' => 'Paulo Coelho', 'price' => '79.000 ₫', 'sold' => 987],
+          ['rank' => 3, 'title' => 'Tôi Tài Giỏi', 'author' => 'Adam Khoo', 'price' => '85.000 ₫', 'sold' => 854],
+          ['rank' => 4, 'title' => 'Sapiens', 'author' => 'Yuval Noah', 'price' => '120.000 ₫', 'sold' => 732],
+          ['rank' => 5, 'title' => 'Atomic Habits', 'author' => 'James Clear', 'price' => '95.000 ₫', 'sold' => 698],
         ];
         foreach ($topBooks as $book): ?>
           <div class="flex items-center gap-3 px-5 py-3">
@@ -114,16 +114,16 @@ require_once './views/components/sidebar.php';
         <?php
         $statusClass = [
           'Chờ xác nhận' => 'bg-yellow-100 text-yellow-700',
-          'Đang giao'    => 'bg-blue-100 text-blue-700',
-          'Hoàn thành'   => 'bg-green-100 text-green-700',
-          'Đã hủy'       => 'bg-red-100 text-red-500',
+          'Đang giao' => 'bg-blue-100 text-blue-700',
+          'Hoàn thành' => 'bg-green-100 text-green-700',
+          'Đã hủy' => 'bg-red-100 text-red-500',
         ];
         $orders = [
           ['id' => '#DH001', 'customer' => 'Nguyễn Văn A', 'date' => '13/03/2026', 'total' => '247.000 ₫', 'status' => 'Hoàn thành'],
-          ['id' => '#DH002', 'customer' => 'Trần Thị B',   'date' => '13/03/2026', 'total' => '95.000 ₫',  'status' => 'Đang giao'],
-          ['id' => '#DH003', 'customer' => 'Lê Văn C',     'date' => '12/03/2026', 'total' => '163.000 ₫', 'status' => 'Chờ xác nhận'],
-          ['id' => '#DH004', 'customer' => 'Phạm Thị D',   'date' => '12/03/2026', 'total' => '78.000 ₫',  'status' => 'Đã hủy'],
-          ['id' => '#DH005', 'customer' => 'Hoàng Văn E',  'date' => '11/03/2026', 'total' => '340.000 ₫', 'status' => 'Hoàn thành'],
+          ['id' => '#DH002', 'customer' => 'Trần Thị B', 'date' => '13/03/2026', 'total' => '95.000 ₫', 'status' => 'Đang giao'],
+          ['id' => '#DH003', 'customer' => 'Lê Văn C', 'date' => '12/03/2026', 'total' => '163.000 ₫', 'status' => 'Chờ xác nhận'],
+          ['id' => '#DH004', 'customer' => 'Phạm Thị D', 'date' => '12/03/2026', 'total' => '78.000 ₫', 'status' => 'Đã hủy'],
+          ['id' => '#DH005', 'customer' => 'Hoàng Văn E', 'date' => '11/03/2026', 'total' => '340.000 ₫', 'status' => 'Hoàn thành'],
         ];
         foreach ($orders as $order): ?>
           <div class="flex items-center gap-3 px-5 py-3">
