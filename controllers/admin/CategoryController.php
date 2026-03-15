@@ -173,7 +173,7 @@ class CategoryController
                 'description' => $description,
                 'status' => $status
             ];
-            redirect('admin-categories-edit?id=' . $id);
+            redirect('admin-categories-edit&id=' . $id);
         }
 
         // Cập nhật danh mục

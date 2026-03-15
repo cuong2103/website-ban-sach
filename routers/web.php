@@ -44,6 +44,16 @@ match ($act) {
   'admin-categories-update' => (new CategoryController())->update(),
   'admin-categories-delete' => (new CategoryController())->delete(),
 
+  // ─── Admin: Flash Sale Management ───────────────────────────────────
+  'admin-flash-sales' => (new FlashSaleController())->list(),
+  'admin-flash-sales-create' => (new FlashSaleController())->formCreate(),
+  'admin-flash-sales-store' => (new FlashSaleController())->create(),
+  'admin-flash-sales-edit' => (new FlashSaleController())->formEdit(),
+  'admin-flash-sales-update' => (new FlashSaleController())->update(),
+  'admin-flash-sales-delete' => (new FlashSaleController())->delete(),
+  'admin-flash-sales-add-item' => (new FlashSaleController())->addItem(),
+  'admin-flash-sales-remove-item' => (new FlashSaleController())->removeItem(),
+
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================

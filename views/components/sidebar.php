@@ -27,24 +27,31 @@ $inactiveClass = 'text-gray-400 hover:bg-white/10 hover:text-white';
   <nav class="flex-1 overflow-y-auto py-3 space-y-0.5">
 
     <!-- Dashboard -->
-    <a href="<?= BASE_URL ?>?act=admin-dashboard"
+    <a href="<?= BASE_URL ?>admin-dashboard"
       class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive('admin-dashboard', $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
       <span class="whitespace-nowrap">Dashboard</span>
     </a>
 
     <!-- Quản lý danh mục -->
-    <a href="<?= BASE_URL ?>?act=admin-categories"
+    <a href="<?= BASE_URL ?>admin-categories"
       class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive(['admin-categories', 'admin-categories-create', 'admin-categories-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="folder" class="w-4 h-4 shrink-0"></i>
       <span class="whitespace-nowrap">Danh mục</span>
+    </a>
+
+    <!-- Quản lý flash sale -->
+    <a href="<?= BASE_URL ?>admin-flash-sales"
+      class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive(['admin-flash-sales', 'admin-flash-sales-create', 'admin-flash-sales-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
+      <i data-lucide="zap" class="w-4 h-4 shrink-0"></i>
+      <span class="whitespace-nowrap">Flash Sale</span>
     </a>
 
   </nav>
 
   <!-- Bottom: Đăng xuất -->
   <div class="p-3 border-t border-white/10">
-    <a href="<?= BASE_URL ?>?act=logout"
+    <a href="<?= BASE_URL ?>logout"
       class="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-400 hover:bg-white/10 hover:text-white text-sm transition-colors">
       <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
       <span>Đăng xuất</span>
