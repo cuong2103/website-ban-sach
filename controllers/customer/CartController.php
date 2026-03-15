@@ -294,4 +294,37 @@ class CartController
 
     require_once './views/customer/checkout_success.php';
   }
+
+  public function history()
+  {
+    $userId = (int)($_SESSION['currentUser']['id'] ?? 0);
+    if ($userId <= 0) {
+      redirect('login');
+    }
+
+    $orders = $this->cartModel->getOrderHistory($userId);
+
+    require_once './views/customer/order_history.php';
+  }
+
+  public function orderDetail()
+  {
+    $userId = (int)($_SESSION['currentUser']['id'] ?? 0);
+    if ($userId <= 0) {
+      redirect('login');
+    }
+
+    $orderCode = trim($_GET['code'] ?? '');
+    if ($orderCode === '') {
+      redirect('orders');
+    }
+
+    $order = $this->cartModel->getOrderDetailByCode($userId, $orderCode);
+    if (!$order) {
+      Message::set('error', 'Không tìm thấy đơn hàng.');
+      redirect('orders');
+    }
+
+    require_once './views/customer/order_detail.php';
+  }
 }
