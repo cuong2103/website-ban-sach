@@ -104,10 +104,10 @@ if ($isLoggedIn) {
                     <?php $currentUser = $_SESSION['currentUser'] ?? null; ?>
 
                     <?php if ($isLoggedIn): ?>
-                    <a href="<?= BASE_URL ?>?act=account"
+                    <a href="<?= BASE_URL ?>?act=orders"
                         class="hidden md:flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-[#4CAF50] hover:bg-gray-50 rounded-lg transition-colors">
                         <i data-lucide="user" class="w-4 h-4"></i>
-                        <span>Tài khoản</span>
+                        <span>Đơn hàng</span>
                     </a>
                     <a href="<?= BASE_URL ?>?act=cart"
                         class="relative flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-[#4CAF50] hover:bg-gray-50 rounded-lg transition-colors">
@@ -146,9 +146,9 @@ if ($isLoggedIn) {
                 <?php endforeach; ?>
 
                 <?php if ($isLoggedIn): ?>
-                <a href="<?= BASE_URL ?>?act=account"
+                <a href="<?= BASE_URL ?>?act=orders"
                     class="flex items-center gap-2 px-4 py-2 text-sm text-[#333] hover:bg-gray-50 rounded-lg">
-                    <i data-lucide="user" class="w-4 h-4"></i> Tài khoản
+                    <i data-lucide="receipt" class="w-4 h-4"></i> Đơn hàng của tôi
                 </a>
                 <a href="<?= BASE_URL ?>?act=cart"
                     class="flex items-center gap-2 px-4 py-2 text-sm text-[#333] hover:bg-gray-50 rounded-lg">

@@ -30,6 +30,8 @@ match ($act) {
   'checkout' => (new CartController())->checkout(),
   'checkout-place' => (new CartController())->placeOrder(),
   'checkout-success' => (new CartController())->success(),
+  'orders' => (new CartController())->history(),
+  'order-detail' => (new CartController())->orderDetail(),
 
   // ─── Admin ────────────────────────────────────────────────────────
   'admin-dashboard' => (new DashboardController())->Dashboard(),

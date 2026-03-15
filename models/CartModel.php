@@ -435,6 +435,34 @@ class CartModel
     return 'ORD' . date('YmdHis') . rand(100, 999);
   }
 
+  public function getOrderHistory($userId)
+  {
+    $stmt = $this->conn->prepare("\n      SELECT\n        o.order_id,\n        o.order_code,\n        o.total_amount,\n        o.discount_amount,\n        o.created_at,\n        s.status_name,\n        COUNT(oi.order_item_id) AS item_count\n      FROM orders o\n      LEFT JOIN order_status s ON s.status_id = o.status_id\n      LEFT JOIN order_items oi ON oi.order_id = o.order_id\n      WHERE o.user_id = :user_id\n      GROUP BY o.order_id, o.order_code, o.total_amount, o.discount_amount, o.created_at, s.status_name\n      ORDER BY o.created_at DESC\n    ");
+    $stmt->execute(['user_id' => (int)$userId]);
+
+    return $stmt->fetchAll();
+  }
+
+  public function getOrderDetailByCode($userId, $orderCode)
+  {
+    $stmt = $this->conn->prepare("\n      SELECT\n        o.order_id,\n        o.order_code,\n        o.total_amount,\n        o.discount_amount,\n        o.shipping_address,\n        o.phone,\n        o.note,\n        o.created_at,\n        s.status_name,\n        pm.name AS payment_method\n      FROM orders o\n      LEFT JOIN order_status s ON s.status_id = o.status_id\n      LEFT JOIN payment_methods pm ON pm.payment_method_id = o.payment_method_id\n      WHERE o.user_id = :user_id AND o.order_code = :order_code\n      LIMIT 1\n    ");
+    $stmt->execute([
+      'user_id' => (int)$userId,
+      'order_code' => $orderCode,
+    ]);
+    $order = $stmt->fetch();
+
+    if (!$order) {
+      return null;
+    }
+
+    $itemsStmt = $this->conn->prepare("\n      SELECT\n        oi.book_id,\n        oi.quantity,\n        oi.price,\n        oi.subtotal,\n        b.title,\n        b.author,\n        b.thumbnail\n      FROM order_items oi\n      LEFT JOIN books b ON b.book_id = oi.book_id\n      WHERE oi.order_id = :order_id\n      ORDER BY oi.order_item_id ASC\n    ");
+    $itemsStmt->execute(['order_id' => (int)$order['order_id']]);
+    $order['items'] = $itemsStmt->fetchAll();
+
+    return $order;
+  }
+
   private function getBookForCart($bookId)
   {
     $stmt = $this->conn->prepare("
