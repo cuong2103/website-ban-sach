@@ -3,7 +3,7 @@ session_start();
 $act = $_GET['act'] ?? '/';
 
 // Whitelist các route không cần login
-if (!in_array($act, ['/', 'login', 'check-login', 'logout', 'home', 'register', 'check-register'])) {
+if (!in_array($act, ['/', 'login', 'check-login', 'logout', 'home', 'register', 'check-register', 'books'])) {
   checkLogin();
 }
 
@@ -20,6 +20,7 @@ match ($act) {
 
   // ─── Customer ─────────────────────────────────────────────────────
   'home' => (new HomeController())->home(),
+  'books' => (new BookController())->list(),
 
   // ─── Admin ────────────────────────────────────────────────────────
   'admin-dashboard' => (new DashboardController())->Dashboard(),

@@ -43,27 +43,42 @@ $currentAct = $_GET['act'] ?? 'home';
 
                 <div class="hidden md:flex items-center gap-1">
                     <div class="relative group">
-                        <button
+                        <a href="<?= BASE_URL ?>?act=books"
                             class="flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-[#4CAF50] hover:bg-gray-50 rounded-lg transition-colors">
-                            Danh mục <i data-lucide="chevron-down" class="w-[14px] h-[14px]"></i>
-                        </button>
+                            Sản phẩm <i data-lucide="chevron-down" class="w-[14px] h-[14px]"></i>
+                        </a>
                         <div
-                            class="absolute top-full left-0 bg-white shadow-lg rounded-xl py-2 min-w-48 border border-gray-100 z-50 hidden group-hover:block">
-                            <?php
-            $categories = [
-              ['icon' => '📖', 'name' => 'Văn học'],
-              ['icon' => '💼', 'name' => 'Kinh tế'],
-              ['icon' => '🧒', 'name' => 'Thiếu nhi'],
-              ['icon' => '🌟', 'name' => 'Kỹ năng sống'],
-              ['icon' => '🔬', 'name' => 'Khoa học'],
-              ['icon' => '📜', 'name' => 'Lịch sử'],
+                            class="absolute top-full left-0 bg-white shadow-lg rounded-xl p-6 border border-gray-100 z-50 hidden group-hover:block min-w-[900px]">
+                            <div class="grid grid-cols-3 gap-6">
+                                <?php
+            $bookModel = new BookModel();
+                        $navbarCategories = [
+              ['icon' => '📖', 'name' => 'Văn học', 'slug' => 'van-hoc'],
+              ['icon' => '💼', 'name' => 'Kinh tế', 'slug' => 'kinh-te'],
+              ['icon' => '🧒', 'name' => 'Thiếu nhi', 'slug' => 'thieu-nhi'],
+              ['icon' => '🌟', 'name' => 'Kỹ năng sống', 'slug' => 'ky-nang-song'],
+              ['icon' => '🔬', 'name' => 'Khoa học', 'slug' => 'khoa-hoc'],
+              ['icon' => '📜', 'name' => 'Lịch sử', 'slug' => 'lich-su'],
             ];
-            foreach ($categories as $cat): ?>
-                            <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat['name']) ?>"
-                                class="w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-50 hover:text-[#4CAF50] flex items-center gap-2">
-                                <span><?= $cat['icon'] ?></span> <?= $cat['name'] ?>
-                            </a>
-                            <?php endforeach; ?>
+                        foreach ($navbarCategories as $cat): 
+                            $navbarBooks = $bookModel->getBooksByCategory($cat['slug'], 5);
+            ?>
+                                <div>
+                                    <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat['slug']) ?>"
+                                        class="text-sm text-[#333] hover:text-[#4CAF50] flex items-center gap-2 font-semibold mb-3">
+                                        <span><?= $cat['icon'] ?></span> <?= $cat['name'] ?>
+                                    </a>
+                                    <div class="space-y-2">
+                                        <?php foreach ($navbarBooks as $navbarBook): ?>
+                                        <a href="<?= BASE_URL ?>?act=book-detail&id=<?= $navbarBook['id'] ?>"
+                                            class="text-xs text-gray-600 hover:text-[#4CAF50] line-clamp-1 block">
+                                            <?= htmlspecialchars($navbarBook['title']) ?>
+                                        </a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
 
@@ -114,8 +129,8 @@ $currentAct = $_GET['act'] ?? 'home';
             </div>
 
             <div id="mobile-menu" class="md:hidden hidden border-t border-gray-100 py-3 space-y-1">
-                <?php foreach ($categories as $cat): ?>
-                <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat['name']) ?>"
+                <?php foreach ($navbarCategories as $cat): ?>
+                <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat['slug']) ?>"
                     class="w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-50 flex items-center gap-2 rounded-lg">
                     <span><?= $cat['icon'] ?></span> <?= $cat['name'] ?>
                 </a>
