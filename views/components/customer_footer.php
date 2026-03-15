@@ -33,10 +33,20 @@
       <div>
         <h4 class="text-white font-semibold mb-4">Danh mục sách</h4>
         <ul class="space-y-2 text-sm">
-          <?php foreach (['Văn học','Kinh tế','Thiếu nhi','Kỹ năng sống','Khoa học','Lịch sử'] as $cat): ?>
+          <?php
+          $footerCategories = [
+            ['name' => 'Văn học', 'slug' => 'van-hoc'],
+            ['name' => 'Kinh tế', 'slug' => 'kinh-te'],
+            ['name' => 'Thiếu nhi', 'slug' => 'thieu-nhi'],
+            ['name' => 'Kỹ năng sống', 'slug' => 'ky-nang-song'],
+            ['name' => 'Khoa học', 'slug' => 'khoa-hoc'],
+            ['name' => 'Lịch sử', 'slug' => 'lich-su'],
+          ];
+          foreach ($footerCategories as $cat):
+          ?>
             <li>
-              <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat) ?>"
-                 class="hover:text-[#4CAF50] transition-colors"><?= $cat ?></a>
+              <a href="<?= BASE_URL ?>?act=books&category=<?= urlencode($cat['slug']) ?>"
+                 class="hover:text-[#4CAF50] transition-colors"><?= $cat['name'] ?></a>
             </li>
           <?php endforeach; ?>
         </ul>
