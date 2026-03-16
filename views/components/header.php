@@ -1,7 +1,7 @@
 <?php
 $currentUser = $_SESSION['currentUser'] ?? null;
 $fullname = $currentUser['fullname'] ?? 'Admin';
-$role     = ($currentUser['roles'] ?? '') === 'admin' ? 'Quản trị viên' : 'Nhân viên';
+$role     = ($currentUser['roles'] ?? '') == 1 ? 'Quản trị viên' : 'Nhân viên';
 $avatar   = strtoupper(mb_substr($fullname, 0, 1));
 $userId   = $currentUser['id'] ?? null;
 ?>

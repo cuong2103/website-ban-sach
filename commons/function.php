@@ -67,7 +67,13 @@ function deleteSessionError()
 function checkLogin()
 {
     if (!isset($_SESSION['currentUser']["roles"])) {
-        header("Location: " . BASE_URL . '?act=login');
+        $act = $_GET['act'] ?? '/';
+        // Nếu đang cố vào link admin thì redirect ra đăng nhập admin, ngược lại đẩy ra đăng nhập khách
+        if (str_starts_with($act, 'admin-')) {
+            header("Location: " . BASE_URL . '?act=admin-login');
+        } else {
+            header("Location: " . BASE_URL . '?act=login');
+        }
         exit();
     }
 }
@@ -76,17 +82,17 @@ function requireAdmin()
 {
     // Kiểm tra đang login
     if (!isset($_SESSION['currentUser'])) {
-        redirect("login");
+        redirect("admin-login");
     }
 
     // Kiểm tra trạng thái
     if ($_SESSION['currentUser']['status'] != 1) {
         Message::set("error", "Tài khoản đã bị khóa!");
-        session_destroy();
-        redirect("login");
+        unset($_SESSION['currentUser']);
+        redirect("admin-login");
     }
 
-    if (($_SESSION['currentUser']['roles'] ?? '') !== 'admin') {
+    if (($_SESSION['currentUser']['roles'] ?? '') != 1) {
         Message::set("error", "403 - Chỉ Admin được phép truy cập!");
         redirect("403");
     }
