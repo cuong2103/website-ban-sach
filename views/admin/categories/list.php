@@ -1,4 +1,8 @@
+
 <?php
+require_once './views/components/header.php';
+require_once './views/components/sidebar.php';
+?><?php
 $currentPage = $page;
 $successMessage = Message::get('success');
 $errorMessage = Message::get('error');
