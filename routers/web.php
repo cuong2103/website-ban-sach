@@ -57,6 +57,11 @@ match ($act) {
   // ─── Admin: Inventory Management (View Only) ───────────────────────────────────
   'admin-inventories' => (new InventoryController())->list(),
 
+  // ─── Admin: Order Management ────────────────────────────────────────────────
+  'admin-orders' => (new AdminOrderController())->list(),
+  'admin-order-detail' => (new AdminOrderController())->detail(),
+  'admin-order-update-status' => (new AdminOrderController())->updateStatus(),
+
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================
