@@ -1,18 +1,16 @@
-<?php include_once './views/admin/components/header.php'; ?>
+<?php include_once './views/components/header.php'; ?>
 <div class="flex h-screen bg-gray-50 overflow-hidden">
   
   <?php include_once './views/components/sidebar.php'; ?>
   
   <div class="flex-1 flex flex-col h-screen overflow-hidden ml-56">
       
-      <?php include_once './views/admin/components/navbar.php'; ?>
-      
       <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
           <div class="max-w-4xl mx-auto">
               
               <!-- Header -->
               <div class="flex items-center gap-4 mb-6">
-                  <a href="<?= BASE_URL ?>admin-orders" class="p-2 bg-white text-gray-500 rounded-xl hover:bg-gray-50 border border-gray-200 transition-colors">
+                  <a href="<?= BASE_URL ?>?act=admin-orders" class="p-2 bg-white text-gray-500 rounded-xl hover:bg-gray-50 border border-gray-200 transition-colors">
                       <i data-lucide="arrow-left" class="w-5 h-5"></i>
                   </a>
                   <div>
@@ -105,7 +103,7 @@
                       <!-- Box cập nhật trạng thái -->
                       <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                           <h2 class="text-lg font-bold text-gray-900 mb-4">Trạng thái đơn hàng</h2>
-                          <form action="<?= BASE_URL ?>admin-order-update-status" method="POST">
+                          <form action="<?= BASE_URL ?>?act=admin-order-update-status" method="POST">
                               <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
                               
                               <div class="mb-4">
@@ -172,4 +170,4 @@
       </main>
   </div>
 </div>
-<?php include_once './views/admin/components/footer.php'; ?>
+<?php include_once './views/components/footer.php'; ?>

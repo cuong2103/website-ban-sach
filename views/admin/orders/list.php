@@ -1,11 +1,9 @@
-<?php include_once './views/admin/components/header.php'; ?>
+<?php include_once './views/components/header.php'; ?>
 <div class="flex h-screen bg-gray-50 overflow-hidden">
   
   <?php include_once './views/components/sidebar.php'; ?>
   
   <div class="flex-1 flex flex-col h-screen overflow-hidden ml-56">
-      
-      <?php include_once './views/admin/components/navbar.php'; ?>
       
       <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
           <div class="max-w-7xl mx-auto">
@@ -102,7 +100,7 @@
                                       </td>
                                       <td class="px-6 py-4 text-right">
                                           <div class="flex items-center justify-end gap-2">
-                                              <a href="<?= BASE_URL ?>admin-order-detail&id=<?= $order['order_id'] ?>" 
+                                              <a href="<?= BASE_URL ?>?act=admin-order-detail&id=<?= $order['order_id'] ?>" 
                                                  class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                                                  title="Xem chi tiết">
                                                   <i data-lucide="eye" class="w-4 h-4"></i>
@@ -124,7 +122,7 @@
                       
                       <div class="flex gap-1">
                           <?php
-                          $baseUrl = BASE_URL . "admin-orders";
+                          $baseUrl = BASE_URL . "?act=admin-orders";
                           if (!empty($search)) $baseUrl .= "&search=" . urlencode($search);
                           if (!empty($statusId)) $baseUrl .= "&status_id=" . urlencode($statusId);
                           ?>
@@ -156,4 +154,4 @@
       </main>
   </div>
 </div>
-<?php include_once './views/admin/components/footer.php'; ?>
+<?php include_once './views/components/footer.php'; ?>

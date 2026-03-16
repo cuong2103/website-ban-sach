@@ -147,8 +147,10 @@ class AuthController
 
   public function logout()
   {
-    session_destroy();
-    header("Location: " . BASE_URL . "?act=login");
-    exit();
+    unset($_SESSION['currentUser']);
+    unset($_SESSION['cart_voucher']);
+    // You can unset other specific session data if needed
+    Message::set('success', 'Đã đăng xuất thành công.');
+    redirect('login');
   }
 }
