@@ -57,6 +57,61 @@ class AuthController
     redirect('/');
   }
 
+  public function formAdminLogin()
+  {
+    require_once './views/admin/auth/login.php';
+  }
+
+  public function adminLogin()
+  {
+    $email    = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    $_SESSION['old']['email'] = $email;
+
+    $errors = validate(['email' => $email, 'password' => $password], [
+      'email'    => 'required|email',
+      'password' => 'required',
+    ]);
+
+    if (!empty($errors)) {
+      Message::set('error', 'Vui lòng điền đầy đủ thông tin hợp lệ.');
+      redirect('admin-login');
+    }
+
+    $user = $this->userModel->findByEmail($email);
+
+    if (!$user || !password_verify($password, $user['password'])) {
+      Message::set('error', 'Email hoặc mật khẩu không đúng.');
+      redirect('admin-login');
+    }
+
+    if ($user['status'] != 1) {
+      Message::set('error', 'Tài khoản đã bị khóa. Vui lòng liên hệ hỗ trợ.');
+      redirect('admin-login');
+    }
+
+    // Quan trọng: Kiểm tra xem user có phải là admin không
+    if (($user['roles'] ?? '') != 1) {
+        Message::set('error', 'Bạn không có quyền truy cập trang quản trị.');
+        redirect('admin-login');
+    }
+
+    $_SESSION['currentUser'] = [
+      'id'       => $user['id'],
+      'fullname' => $user['fullname'],
+      'email'    => $user['email'],
+      'roles'    => $user['roles'],
+      'status'   => $user['status'],
+      'avatar'   => $user['avatar'] ?? null,
+    ];
+
+    unset($_SESSION['old']);
+
+    Message::set('success', 'Đăng nhập Quản trị viên thành công!');
+    redirect('admin-dashboard');
+  }
+
   public function formRegister()
   {
     require_once './views/auth/register.php';
