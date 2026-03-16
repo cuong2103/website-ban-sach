@@ -54,6 +54,13 @@ $inactiveClass = 'text-gray-400 hover:bg-white/10 hover:text-white';
       <span class="whitespace-nowrap">Kho Hàng</span>
     </a>
 
+    <!-- Quản lý đơn hàng -->
+    <a href="<?= BASE_URL ?>admin-orders"
+      class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive(['admin-orders', 'admin-order-detail'], $currentAct) ? $activeClass : $inactiveClass ?>">
+      <i data-lucide="shopping-bag" class="w-4 h-4 shrink-0"></i>
+      <span class="whitespace-nowrap">Đơn Hàng</span>
+    </a>
+
   </nav>
 
   <!-- Bottom: Đăng xuất -->
