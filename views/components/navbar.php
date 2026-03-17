@@ -117,17 +117,18 @@ if ($isLoggedIn) {
                             id="cart-badge"><?= $navbarCartCount ?></span>
                         <span class="hidden sm:block">Giỏ hàng</span>
                     </a>
+                    <a href="<?= BASE_URL ?>?act=logout"
+                        class="hidden md:flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors font-medium">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Đăng xuất</span>
+                    </a>
                     <?php else: ?>
                     <a href="<?= BASE_URL ?>?act=login"
                         class="hidden md:flex items-center gap-1 px-3 py-2 text-sm text-[#333] hover:text-[#4CAF50] hover:bg-gray-50 rounded-lg transition-colors">
                         <i data-lucide="log-in" class="w-4 h-4"></i>
                         <span>Đăng nhập</span>
                     </a>
-                    <a href="<?= BASE_URL ?>?act=register"
-                        class="hidden md:flex items-center gap-1 px-4 py-2 text-sm bg-[#4CAF50] text-white hover:bg-[#43A047] rounded-lg transition-colors font-medium">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Tạo tài khoản</span>
-                    </a>
+
                     <?php endif; ?>
 
                     <button class="md:hidden p-2 hover:bg-gray-50 rounded-lg"
@@ -154,15 +155,16 @@ if ($isLoggedIn) {
                     class="flex items-center gap-2 px-4 py-2 text-sm text-[#333] hover:bg-gray-50 rounded-lg">
                     <i data-lucide="shopping-cart" class="w-4 h-4"></i> Giỏ hàng
                 </a>
+                <a href="<?= BASE_URL ?>?act=logout"
+                    class="flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg font-medium">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Đăng xuất
+                </a>
                 <?php else: ?>
                 <a href="<?= BASE_URL ?>?act=login"
                     class="flex items-center gap-2 px-4 py-2 text-sm text-[#333] hover:bg-gray-50 rounded-lg">
                     <i data-lucide="log-in" class="w-4 h-4"></i> Đăng nhập
                 </a>
-                <a href="<?= BASE_URL ?>?act=register"
-                    class="flex items-center gap-2 px-4 py-2 text-sm bg-[#4CAF50] text-white hover:bg-[#43A047] rounded-lg font-medium">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i> Tạo tài khoản
-                </a>
+
                 <?php endif; ?>
             </div>
         </div>

@@ -140,8 +140,12 @@ class AuthController
       'email' => 'required|email',
       'phone' => 'required|phone',
       'password' => 'required|min:8',
-      'password_confirm' => 'required',
+      'password_confirm' => 'required|min:8',
     ]);
+
+    if (!isset($_POST['terms'])) {
+      $errors['terms'][] = 'Bạn phải đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.';
+    }
 
     if (!empty($errors)) {
       $_SESSION['validation_errors'] = $errors;

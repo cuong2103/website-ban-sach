@@ -1,13 +1,29 @@
 <?php
-require_once './views/components/navbar.php';
 $error = Message::get('error');
 $errors = $_SESSION['validation_errors'] ?? [];
 unset($_SESSION['validation_errors']);
 ?>
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - BookStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="h-full bg-[#F9F9F9] relative">
+
+    <!-- Nút Quay lại -->
+    <a href="<?= BASE_URL ?>"
+        class="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 text-gray-600 hover:text-[#4CAF50] transition-colors bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 z-10">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span class="text-sm font-medium">Quay lại trang chính</span>
+    </a>
 
 <div class="max-w-[1200px] mx-auto px-4 py-12">
     <div class="flex items-center justify-center min-h-[calc(100vh-200px)]">
-        <div class="w-full max-w-md">
+        <div class="w-full max-w-lg">
             <!-- Logo -->
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-[#4CAF50] rounded-2xl mb-4 shadow-lg">
@@ -107,14 +123,20 @@ unset($_SESSION['validation_errors']);
                     </div>
 
                     <div class="flex items-start gap-3 pt-2">
-                        <input type="checkbox" id="terms" name="terms"
+                        <input type="checkbox" id="terms" name="terms" required
                             class="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#4CAF50] focus:ring-[#4CAF50]">
                         <label for="terms" class="text-sm text-gray-600">
                             Tôi đồng ý với <a href="#" class="text-[#4CAF50] font-medium hover:underline">Điều khoản
                                 dịch vụ
-                                vàChính sách bảo mật</a>
+                                và Chính sách bảo mật</a>
                         </label>
                     </div>
+                    <?php if (isset($errors['terms'])): ?>
+                    <p class="text-red-500 text-xs mt-1">
+                        <i data-lucide="alert-circle" class="w-3 h-3 inline"></i>
+                        <?= htmlspecialchars($errors['terms'][0]) ?>
+                    </p>
+                    <?php endif; ?>
 
                     <button type="submit"
                         class="w-full bg-[#4CAF50] hover:bg-[#43A047] text-white font-semibold py-2.5 rounded-lg transition duration-150 flex items-center justify-center gap-2 mt-6">
@@ -135,4 +157,34 @@ unset($_SESSION['validation_errors']);
     </div>
 </div>
 
-<?php require_once './views/components/customer_footer.php'; ?>
+<script>
+    lucide.createIcons();
+
+    // Ẩn thông báo lỗi khi người dùng bắt đầu nhập
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            // Xóa viền đỏ
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+            
+            // Ẩn dòng text lỗi ngay bên dưới
+            const errorText = this.parentElement.nextElementSibling;
+            if (errorText && errorText.tagName === 'P' && errorText.classList.contains('text-red-500')) {
+                errorText.style.display = 'none';
+            }
+        });
+    });
+
+    // Xử lý riêng cho ô checkbox terms
+    const termsCheckbox = document.getElementById('terms');
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', function() {
+            const errorText = this.parentElement.nextElementSibling;
+            if (errorText && errorText.tagName === 'P' && errorText.classList.contains('text-red-500')) {
+                errorText.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>
