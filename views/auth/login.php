@@ -1,11 +1,27 @@
 <?php
-require_once './views/components/navbar.php';
 $error = Message::get('error');
 ?>
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - BookStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="h-full bg-[#F9F9F9] relative">
+
+    <!-- Nút Quay lại -->
+    <a href="<?= BASE_URL ?>"
+        class="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 text-gray-600 hover:text-[#4CAF50] transition-colors bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 z-10">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span class="text-sm font-medium">Quay lại trang chính</span>
+    </a>
 
 <div class="max-w-[1200px] mx-auto px-4 py-12">
     <div class="flex items-center justify-center min-h-[calc(100vh-200px)]">
-        <div class="w-full max-w-md">
+        <div class="w-full max-w-lg">
             <!-- Logo -->
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-[#4CAF50] rounded-2xl mb-4 shadow-lg">
@@ -20,7 +36,7 @@ $error = Message::get('error');
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">Đăng nhập</h2>
 
                 <?php if ($error): ?>
-                <div
+                <div id="login-error-alert"
                     class="mb-4 px-4 py-3 bg-red-50 border border-red-300 text-red-700 rounded-lg text-sm flex items-center gap-2">
                     <i data-lucide="triangle-alert" class="w-4 h-4 flex-shrink-0"></i>
                     <?= htmlspecialchars($error) ?>
@@ -67,4 +83,18 @@ $error = Message::get('error');
     </div>
 </div>
 
-<?php require_once './views/components/customer_footer.php'; ?>
+<script>
+    lucide.createIcons();
+
+    // Ẩn thông báo lỗi chung khi người dùng bắt đầu nhập lại thông tin
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            const errorAlert = document.getElementById('login-error-alert');
+            if (errorAlert) {
+                errorAlert.style.display = 'none';
+            }
+        });
+    });
+</script>
+</body>
+</html>
