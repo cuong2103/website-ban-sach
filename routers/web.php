@@ -68,6 +68,13 @@ match ($act) {
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================
+  'admin-books' => (new AdminBookController())->list(),
+  'admin-books-create' => (new AdminBookController())->create(),
+  'admin-books-store' => (new AdminBookController())->store(),
+  'admin-books-edit' => (new AdminBookController())->edit(),
+  'admin-books-update' => (new AdminBookController())->update(),
+  'admin-books-delete' => (new AdminBookController())->delete(),
+  'admin-books-detail' => (new AdminBookController())->detail(),
 
   // ─── Error pages ──────────────────────────────────────────────────
   '403' => require_once './views/forbidden.php',
