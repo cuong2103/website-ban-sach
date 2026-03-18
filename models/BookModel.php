@@ -182,4 +182,243 @@ class BookModel
     $stmt->execute();
     return $stmt->fetchAll();
   }
+
+  // --- ADMIN METHODS ---
+
+  public function getAdminAll($search = '', $category = '', $limit = 10, $offset = 0)
+  {
+    $query = "
+      SELECT 
+        b.*,
+        c.name as category_name
+      FROM books b
+      LEFT JOIN categories c ON b.category_id = c.category_id
+      WHERE 1=1
+    ";
+
+    $params = [];
+    if (!empty($search)) {
+      $query .= " AND (b.title LIKE ? OR b.author LIKE ?)";
+      $params[] = '%' . $search . '%';
+      $params[] = '%' . $search . '%';
+    }
+
+    if (!empty($category)) {
+      $query .= " AND b.category_id = ?";
+      $params[] = $category;
+    }
+
+    $query .= " ORDER BY b.created_at DESC LIMIT ? OFFSET ?";
+    
+    $stmt = $this->conn->prepare($query);
+    
+    $paramIndex = 1;
+    foreach ($params as $param) {
+      $stmt->bindValue($paramIndex++, $param, PDO::PARAM_STR);
+    }
+    
+    $stmt->bindValue($paramIndex++, (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue($paramIndex++, (int)$offset, PDO::PARAM_INT);
+    
+    $stmt->execute();
+    return $stmt->fetchAll();
+  }
+
+  public function countAdminAll($search = '', $category = '')
+  {
+    $query = "
+      SELECT COUNT(*) as total
+      FROM books b
+      WHERE 1=1
+    ";
+
+    $params = [];
+    if (!empty($search)) {
+      $query .= " AND (b.title LIKE ? OR b.author LIKE ?)";
+      $params[] = '%' . $search . '%';
+      $params[] = '%' . $search . '%';
+    }
+
+    if (!empty($category)) {
+      $query .= " AND b.category_id = ?";
+      $params[] = $category;
+    }
+
+    $stmt = $this->conn->prepare($query);
+    
+    $paramIndex = 1;
+    foreach ($params as $param) {
+      $stmt->bindValue($paramIndex++, $param, PDO::PARAM_STR);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetch()['total'] ?? 0;
+  }
+
+  public function getAdminById($id)
+  {
+    $stmt = $this->conn->prepare("
+      SELECT 
+        b.*,
+        c.name as category_name
+      FROM books b
+      LEFT JOIN categories c ON b.category_id = c.category_id
+      WHERE b.book_id = :id
+      LIMIT 1
+    ");
+    $stmt->execute(['id' => $id]);
+    return $stmt->fetch();
+  }
+
+  public function create($data)
+  {
+    try {
+      $stmt = $this->conn->prepare("
+        INSERT INTO books (
+          category_id, title, author, publisher, price, sale_price, 
+          description, thumbnail, weight, dimensions, cover_type, 
+          stock, status, is_featured, is_bestseller, created_at, updated_at
+        ) VALUES (
+          :category_id, :title, :author, :publisher, :price, :sale_price, 
+          :description, :thumbnail, :weight, :dimensions, :cover_type, 
+          :stock, :status, :is_featured, :is_bestseller, NOW(), NOW()
+        )
+      ");
+
+      $stmt->execute([
+        ':category_id' => (int)$data['category_id'],
+        ':title' => trim($data['title']),
+        ':author' => trim($data['author']),
+        ':publisher' => trim($data['publisher'] ?? ''),
+        ':price' => (float)$data['price'],
+        ':sale_price' => !empty($data['sale_price']) ? (float)$data['sale_price'] : null,
+        ':description' => trim($data['description'] ?? ''),
+        ':thumbnail' => trim($data['thumbnail'] ?? ''),
+        ':weight' => trim($data['weight'] ?? ''),
+        ':dimensions' => trim($data['dimensions'] ?? ''),
+        ':cover_type' => $data['cover_type'] ?? 'Bìa mềm',
+        ':stock' => (int)($data['stock'] ?? 0),
+        ':status' => (int)($data['status'] ?? 1),
+        ':is_featured' => (int)($data['is_featured'] ?? 0),
+        ':is_bestseller' => (int)($data['is_bestseller'] ?? 0),
+      ]);
+
+      return [
+        'ok' => true,
+        'id' => $this->conn->lastInsertId(),
+        'message' => 'Thêm sách thành công'
+      ];
+    } catch (Exception $e) {
+      return ['ok' => false, 'message' => $e->getMessage()];
+    }
+  }
+
+  public function update($id, $data)
+  {
+    try {
+      $sql = "
+        UPDATE books SET 
+          category_id = :category_id,
+          title = :title,
+          author = :author,
+          publisher = :publisher,
+          price = :price,
+          sale_price = :sale_price,
+          description = :description,
+          weight = :weight,
+          dimensions = :dimensions,
+          cover_type = :cover_type,
+          stock = :stock,
+          status = :status,
+          is_featured = :is_featured,
+          is_bestseller = :is_bestseller,
+          updated_at = NOW()
+      ";
+
+      $params = [
+        ':category_id' => (int)$data['category_id'],
+        ':title' => trim($data['title']),
+        ':author' => trim($data['author']),
+        ':publisher' => trim($data['publisher'] ?? ''),
+        ':price' => (float)$data['price'],
+        ':sale_price' => !empty($data['sale_price']) ? (float)$data['sale_price'] : null,
+        ':description' => trim($data['description'] ?? ''),
+        ':weight' => trim($data['weight'] ?? ''),
+        ':dimensions' => trim($data['dimensions'] ?? ''),
+        ':cover_type' => $data['cover_type'] ?? 'Bìa mềm',
+        ':stock' => (int)($data['stock'] ?? 0),
+        ':status' => (int)($data['status'] ?? 1),
+        ':is_featured' => (int)($data['is_featured'] ?? 0),
+        ':is_bestseller' => (int)($data['is_bestseller'] ?? 0),
+        ':id' => $id
+      ];
+
+      if (!empty($data['thumbnail'])) {
+        $sql .= ", thumbnail = :thumbnail";
+        $params[':thumbnail'] = $data['thumbnail'];
+      }
+
+      $sql .= " WHERE book_id = :id";
+
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute($params);
+
+      return ['ok' => true, 'message' => 'Cập nhật sách thành công'];
+    } catch (Exception $e) {
+      return ['ok' => false, 'message' => $e->getMessage()];
+    }
+  }
+
+  public function delete($id)
+  {
+    try {
+      $stmt = $this->conn->prepare("DELETE FROM books WHERE book_id = :id");
+      $stmt->execute(['id' => $id]);
+      return ['ok' => true, 'message' => 'Xóa sách thành công'];
+    } catch (Exception $e) {
+      return ['ok' => false, 'message' => 'Không thể xóa sách này vì đã có đơn hàng hoặc liên kết khác ràng buộc.'];
+    }
+  }
+
+  // --- IMAGE MANAGEMENT ---
+  public function getBookImages($bookId)
+  {
+    $stmt = $this->conn->prepare("SELECT * FROM book_images WHERE book_id = :book_id ORDER BY created_at ASC");
+    $stmt->execute(['book_id' => $bookId]);
+    return $stmt->fetchAll();
+  }
+
+  public function addBookImage($bookId, $imageUrl)
+  {
+    $stmt = $this->conn->prepare("INSERT INTO book_images (book_id, image_url) VALUES (:book_id, :image_url)");
+    return $stmt->execute(['book_id' => $bookId, 'image_url' => $imageUrl]);
+  }
+
+  public function deleteBookImage($imageId)
+  {
+    $stmt = $this->conn->prepare("DELETE FROM book_images WHERE image_id = :image_id");
+    return $stmt->execute(['image_id' => $imageId]);
+  }
+
+  public function getBookImageById($imageId)
+  {
+    $stmt = $this->conn->prepare("SELECT * FROM book_images WHERE image_id = :image_id LIMIT 1");
+    $stmt->execute(['image_id' => $imageId]);
+    return $stmt->fetch();
+  }
+
+  // --- DATALIST HELPERS ---
+  public function getDistinctAuthors()
+  {
+    $stmt = $this->conn->prepare("SELECT DISTINCT author FROM books WHERE author != '' ORDER BY author ASC");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+  }
+
+  public function getDistinctPublishers()
+  {
+    $stmt = $this->conn->prepare("SELECT DISTINCT publisher FROM books WHERE publisher != '' ORDER BY publisher ASC");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+  }
 }
