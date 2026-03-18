@@ -1,5 +1,10 @@
 <?php
 $currentPage = 'books';
+
+$flashMessage = Message::get('success');
+$errorMsg     = Message::get('error');
+deleteSessionError();
+
 include_once './views/components/header.php';
 include_once './views/components/sidebar.php';
 ?>
@@ -7,6 +12,20 @@ include_once './views/components/sidebar.php';
 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
     <div class="w-full">
         
+        <?php if ($flashMessage): ?>
+            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl relative flex items-center gap-2" role="alert">
+                <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+                <span><?= htmlspecialchars($flashMessage) ?></span>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($errorMsg): ?>
+            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative flex items-center gap-2" role="alert">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+                <span><?= htmlspecialchars($errorMsg) ?></span>
+            </div>
+        <?php endif; ?>
+
         <div class="flex items-center gap-4 mb-6">
             <a href="<?= BASE_URL ?>?act=admin-books" class="p-2 hover:bg-gray-200 rounded-lg transition-colors">
                 <i data-lucide="arrow-left" class="w-5 h-5 text-gray-600"></i>
@@ -16,8 +35,17 @@ include_once './views/components/sidebar.php';
                 <p class="text-sm text-gray-500 mt-1">Thông tin đầy đủ của sách trong hệ thống</p>
             </div>
             <div class="ml-auto flex gap-3">
-                <a href="<?= BASE_URL ?>?act=admin-books-edit&id=<?= $book['book_id'] ?>" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 shadow-sm">
-                    <i data-lucide="edit-2" class="w-4 h-4"></i> Chỉnh sửa
+                <!-- Toggle status nhanh -->
+                <?php
+                $toggleUrl = BASE_URL . '?act=admin-books-toggle-status&id=' . $book['book_id'];
+                $isVisible = $book['status'] == 1;
+                ?>
+                <a href="<?= $toggleUrl ?>" 
+                   title="<?= $isVisible ? 'Ẩn sách này' : 'Hiện sách này' ?>"
+                   class="px-4 py-2 rounded-xl font-medium flex items-center gap-2 text-sm transition-colors shadow-sm
+                          <?= $isVisible ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-green-100 text-green-700 hover:bg-green-200' ?>">
+                    <i data-lucide="<?= $isVisible ? 'eye-off' : 'eye' ?>" class="w-4 h-4"></i>
+                    <?= $isVisible ? 'Ẩn sách' : 'Hiện sách' ?>
                 </a>
             </div>
         </div>
@@ -106,24 +134,6 @@ include_once './views/components/sidebar.php';
                     </div>
                 </div>
 
-                <!-- Thông số kỹ thuật -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                    <h2 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Thông số kỹ thuật</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="space-y-1">
-                            <p class="text-sm text-gray-400">Trọng lượng</p>
-                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['weight'] ?: '--') ?></p>
-                        </div>
-                        <div class="space-y-1">
-                            <p class="text-sm text-gray-400">Kích thước</p>
-                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['dimensions'] ?: '--') ?></p>
-                        </div>
-                        <div class="space-y-1">
-                            <p class="text-sm text-gray-400">Loại bìa</p>
-                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['cover_type'] ?: '--') ?></p>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Ảnh minh họa (Gallery) -->
                 <?php if (!empty($bookImages)): ?>
@@ -142,6 +152,25 @@ include_once './views/components/sidebar.php';
 
             <!-- Cột phải: Timeline / Metadata -->
             <div class="space-y-6">
+
+                            <!-- Thông số kỹ thuật -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Thông số kỹ thuật</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="space-y-1">
+                            <p class="text-sm text-gray-400">Trọng lượng</p>
+                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['weight'] ?: '--') ?></p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-sm text-gray-400">Kích thước</p>
+                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['dimensions'] ?: '--') ?></p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-sm text-gray-400">Loại bìa</p>
+                            <p class="text-base font-semibold text-gray-700"><?= htmlspecialchars($book['cover_type'] ?: '--') ?></p>
+                        </div>
+                    </div>
+                </div>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Thông tin hệ thống</h2>
                     <div class="space-y-4">
@@ -158,21 +187,11 @@ include_once './views/components/sidebar.php';
                             <span class="text-gray-700 font-medium"><?= date('d/m/Y H:i', strtotime($book['updated_at'])) ?></span>
                         </div>
                     </div>
-                    
-                    <div class="mt-8 pt-6 border-t border-dashed">
-                        <button onclick="window.print()" class="w-full py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-2">
-                            <i data-lucide="printer" class="w-4 h-4"></i> In thẻ kho
-                        </button>
-                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
 </main>
-
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    lucide.createIcons();
-</script>
 
 <?php include_once './views/components/footer.php'; ?>

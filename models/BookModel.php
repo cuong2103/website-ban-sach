@@ -185,7 +185,7 @@ class BookModel
 
   // --- ADMIN METHODS ---
 
-  public function getAdminAll($search = '', $category = '', $limit = 10, $offset = 0)
+  public function getAdminAll($search = '', $category = '', $status_filter = '', $limit = 10, $offset = 0)
   {
     $query = "
       SELECT 
@@ -208,6 +208,11 @@ class BookModel
       $params[] = $category;
     }
 
+    if ($status_filter !== '') {
+      $query .= " AND b.status = ?";
+      $params[] = (int)$status_filter;
+    }
+
     $query .= " ORDER BY b.created_at DESC LIMIT ? OFFSET ?";
     
     $stmt = $this->conn->prepare($query);
@@ -224,7 +229,7 @@ class BookModel
     return $stmt->fetchAll();
   }
 
-  public function countAdminAll($search = '', $category = '')
+  public function countAdminAll($search = '', $category = '', $status_filter = '')
   {
     $query = "
       SELECT COUNT(*) as total
@@ -242,6 +247,11 @@ class BookModel
     if (!empty($category)) {
       $query .= " AND b.category_id = ?";
       $params[] = $category;
+    }
+
+    if ($status_filter !== '') {
+      $query .= " AND b.status = ?";
+      $params[] = (int)$status_filter;
     }
 
     $stmt = $this->conn->prepare($query);
@@ -377,6 +387,28 @@ class BookModel
       return ['ok' => true, 'message' => 'Xóa sách thành công'];
     } catch (Exception $e) {
       return ['ok' => false, 'message' => 'Không thể xóa sách này vì đã có đơn hàng hoặc liên kết khác ràng buộc.'];
+    }
+  }
+
+  public function toggleStatus($id)
+  {
+    try {
+      $stmt = $this->conn->prepare("UPDATE books SET status = IF(status = 1, 0, 1), updated_at = NOW() WHERE book_id = :id");
+      $stmt->execute(['id' => $id]);
+      return ['ok' => true, 'message' => 'Cập nhật trạng thái thành công'];
+    } catch (Exception $e) {
+      return ['ok' => false, 'message' => $e->getMessage()];
+    }
+  }
+
+  public function clearThumbnail($id)
+  {
+    try {
+      $stmt = $this->conn->prepare("UPDATE books SET thumbnail = '', updated_at = NOW() WHERE book_id = :id");
+      $stmt->execute(['id' => $id]);
+      return ['ok' => true];
+    } catch (Exception $e) {
+      return ['ok' => false];
     }
   }
 

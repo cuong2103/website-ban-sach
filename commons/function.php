@@ -37,93 +37,16 @@ function uploadFile($file, $folderSave)
     return null;
 }
 
-function deleteFile($file)
+// Hàm xoá file
+function deleteFile($path)
 {
-    $pathDelete = PATH_ROOT . $file;
-    if (file_exists($pathDelete)) {
-        unlink($pathDelete); // Hàm unlink dùng để xóa file
+    $fullPath = PATH_ROOT . ltrim($path, '/');
+    if (file_exists($fullPath) && is_file($fullPath)) {
+        return unlink($fullPath);
     }
+    return false;
 }
 
-function uploadAndCompressImage($file, $folderSave, $maxWidth = 800, $quality = 80)
-{
-    $file_upload = $file;
-    $fileName = rand(10000, 99999) . '_' . time() . '.jpg';
-    $pathStorage = $folderSave . $fileName;
-    $pathSave = PATH_ROOT . $pathStorage;
-
-    $tmp_file = $file_upload['tmp_name'];
-    $imageFileType = strtolower(pathinfo($file_upload['name'], PATHINFO_EXTENSION));
-
-    if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'webp'])) {
-        return null;
-    }
-
-    // Determine image type and load
-    if ($imageFileType == 'jpg' || $imageFileType == 'jpeg') {
-        $sourceImage = @imagecreatefromjpeg($tmp_file);
-    } elseif ($imageFileType == 'png') {
-        $sourceImage = @imagecreatefrompng($tmp_file);
-    } elseif ($imageFileType == 'webp') {
-        $sourceImage = @imagecreatefromwebp($tmp_file);
-    } else {
-        return null;
-    }
-
-    if (!$sourceImage) {
-        return null;
-    }
-
-    // Get current dimensions
-    $width = imagesx($sourceImage);
-    $height = imagesy($sourceImage);
-
-    // Calculate new dimensions
-    if ($width > $maxWidth) {
-        $newWidth = $maxWidth;
-        $newHeight = floor($height * ($maxWidth / $width));
-    } else {
-        $newWidth = $width;
-        $newHeight = $height;
-    }
-
-    // Create a new true color image
-    $destinationImage = imagecreatetruecolor((int)$newWidth, (int)$newHeight);
-
-    // Preserve transparency for PNG and WebP before converting to jpg
-    if ($imageFileType == 'png' || $imageFileType == 'webp') {
-        $whiteBackground = imagecolorallocate($destinationImage, 255, 255, 255);
-        imagefilledrectangle($destinationImage, 0, 0, (int)$newWidth, (int)$newHeight, $whiteBackground);
-    }
-
-    // Resample
-    imagecopyresampled(
-        $destinationImage,
-        $sourceImage,
-        0, 0, 0, 0,
-        (int)$newWidth, (int)$newHeight,
-        $width, $height
-    );
-
-    // Ensure the folder exists
-    $dirStr = PATH_ROOT . $folderSave;
-    if (!is_dir($dirStr)) {
-        mkdir($dirStr, 0777, true);
-    }
-
-    // Save as JPEG with specified quality
-    $success = imagejpeg($destinationImage, $pathSave, $quality);
-
-    // Free memory
-    imagedestroy($sourceImage);
-    imagedestroy($destinationImage);
-
-    if ($success) {
-        return $pathStorage;
-    }
-
-    return null;
-}
 
 // Hàm debug
 function dd($data)
