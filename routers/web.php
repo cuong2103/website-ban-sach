@@ -40,6 +40,7 @@ match ($act) {
 
   // ─── Admin: Category Management ─────────────────────────────────────
   'admin-categories' => (new CategoryController())->list(),
+  'admin-categories-detail' => (new CategoryController())->detail(),
   'admin-categories-create' => (new CategoryController())->formCreate(),
   'admin-categories-store' => (new CategoryController())->create(),
   'admin-categories-edit' => (new CategoryController())->formEdit(),

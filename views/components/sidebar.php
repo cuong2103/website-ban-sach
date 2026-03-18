@@ -34,14 +34,14 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100 font-medium';
     <a href="<?= BASE_URL ?>?act=admin-dashboard"
       class="flex items-center px-4 py-3 text-sm rounded-lg transition-colors <?= isActive('admin-dashboard', $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
-      <span class="whitespace-nowrap">Dashboard</span>
+      <span class="whitespace-nowrap">Thống kê</span>
     </a>
 
     <!-- Quản lý danh mục -->
     <a href="<?= BASE_URL ?>?act=admin-categories"
       class="flex items-center px-4 py-3 text-sm rounded-lg transition-colors <?= isActive(['admin-categories', 'admin-categories-create', 'admin-categories-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="folder" class="w-5 h-5 mr-3"></i>
-      <span class="whitespace-nowrap">Danh mục</span>
+      <span class="whitespace-nowrap">Quản lí danh mục</span>
     </a>
 
     <!-- Quản lý flash sale -->
@@ -55,14 +55,14 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100 font-medium';
     <a href="<?= BASE_URL ?>?act=admin-inventories"
       class="flex items-center px-4 py-3 text-sm rounded-lg transition-colors <?= isActive(['admin-inventories', 'admin-inventories-create', 'admin-inventories-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="package" class="w-5 h-5 mr-3"></i>
-      <span class="whitespace-nowrap">Kho Hàng</span>
+      <span class="whitespace-nowrap">Quản lí kho</span>
     </a>
 
     <!-- Quản lý đơn hàng -->
     <a href="<?= BASE_URL ?>?act=admin-orders"
       class="flex items-center px-4 py-3 text-sm rounded-lg transition-colors <?= isActive(['admin-orders', 'admin-order-detail'], $currentAct) ? $activeClass : $inactiveClass ?>">
       <i data-lucide="shopping-bag" class="w-5 h-5 mr-3"></i>
-      <span class="whitespace-nowrap">Đơn Hàng</span>
+      <span class="whitespace-nowrap">Quản lí đơn hàng</span>
     </a>
 
   </nav>

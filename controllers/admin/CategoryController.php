@@ -14,16 +14,39 @@ class CategoryController
     public function list()
     {
         $search = trim($_GET['search'] ?? '');
+        $date = trim($_GET['date'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $page = $page < 1 ? 1 : $page;
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
-        $categories = $this->categoryModel->getAll($search, $limit, $offset);
-        $total = $this->categoryModel->countAll($search);
+        $categories = $this->categoryModel->getAll($search, $date, $limit, $offset);
+        $total = $this->categoryModel->countAll($search, $date);
         $totalPages = ceil($total / $limit);
 
         require_once './views/admin/categories/list.php';
+    }
+
+    /**
+     * Xem chi tiết danh mục
+     */
+    public function detail()
+    {
+        $id = (int) ($_GET['id'] ?? 0);
+
+        if ($id <= 0) {
+            Message::set('error', 'Danh mục không hợp lệ.');
+            redirect('admin-categories');
+        }
+
+        $category = $this->categoryModel->getById($id);
+
+        if (!$category) {
+            Message::set('error', 'Danh mục không tồn tại.');
+            redirect('admin-categories');
+        }
+
+        require_once './views/admin/categories/detail.php';
     }
 
     /**

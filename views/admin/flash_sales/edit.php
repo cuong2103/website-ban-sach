@@ -17,404 +17,231 @@ if (empty($old)) {
 
 $successMessage = Message::get('success');
 $errorMessage = Message::get('error');
+
+include_once './views/components/header.php';
+include_once './views/components/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa Flash Sale | Admin</title>
-    <link rel="stylesheet" href="<?php echo UPLOADS_URL; ?>../assets/common.css">
-    <style>
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .form-header {
-            margin-bottom: 30px;
-        }
-
-        .form-header h1 {
-            color: #333;
-            margin: 0 0 10px 0;
-        }
-
-        .form-header a {
-            color: #FF6B35;
-            text-decoration: none;
-        }
-
-        .form-header a:hover {
-            text-decoration: underline;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .form-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-section h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 16px;
-            border-bottom: 2px solid #FF6B35;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="datetime-local"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-        }
-
-        input[type="text"]:focus,
-        input[type="datetime-local"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #FF6B35;
-            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.25);
-        }
-
-        .form-error {
-            color: #721c24;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .form-group.error input,
-        .form-group.error select {
-            border-color: #dc3545;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-submit {
-            background-color: #FF6B35;
-            color: white;
-        }
-
-        .btn-submit:hover {
-            background-color: #E55A24;
-        }
-
-        .btn-cancel {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-cancel:hover {
-            background-color: #5a6268;
-        }
-
-        .message {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .items-list {
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background: #f9f9f9;
-        }
-
-        .item-info {
-            flex: 1;
-        }
-
-        .item-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .item-details {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-delete-item {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-delete-item:hover {
-            background-color: #c82333;
-        }
-
-        .add-item-form {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .add-item-form h3 {
-            margin-top: 0;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-
-        .helper-text {
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="form-header">
-            <h1>Sửa Flash Sale</h1>
-            <a href="<?php echo BASE_URL; ?>admin-flash-sales">← Quay lại danh sách</a>
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+    <div class="w-full">
+              
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-6">
+            <a href="<?= BASE_URL ?>?act=admin-flash-sales" class="p-2 bg-white text-gray-500 rounded-xl hover:bg-gray-50 border border-gray-200 transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Chi tiết Flash Sale #<?= $flashSale['id'] ?></h1>
+                <p class="text-sm text-gray-500 mt-1">Quản lý và cập nhật thông tin chương trình khuyến mãi chớp nhoáng</p>
+            </div>
         </div>
 
         <?php if ($successMessage): ?>
-            <div class="message success"><?php echo $successMessage; ?></div>
+            <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                <?php echo $successMessage; ?>
+            </div>
         <?php endif; ?>
 
         <?php if ($errorMessage): ?>
-            <div class="message error"><?php echo $errorMessage; ?></div>
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-red-500"></i>
+                <?php echo $errorMessage; ?>
+            </div>
         <?php endif; ?>
 
-        <div class="grid">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <!-- Thông tin Flash Sale -->
-            <div class="form-section">
-                <h2>Thông tin Flash Sale</h2>
-                <form method="POST" action="<?php echo BASE_URL; ?>admin-flash-sales-update">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-white">
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5 text-[#FF6B35]"></i>
+                        Thông tin chương trình
+                    </h2>
+                </div>
+                <form method="POST" action="<?php echo BASE_URL; ?>admin-flash-sales-update" class="p-6 space-y-6">
                     <input type="hidden" name="id" value="<?php echo $flashSale['id']; ?>">
 
                     <!-- Tên flash sale -->
-                    <div class="form-group <?php echo isset($validationErrors['name']) ? 'error' : ''; ?>">
-                        <label for="name">Tên Flash Sale <span style="color: red;">*</span></label>
-                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($old['name']); ?>"
-                            placeholder="Nhập tên flash sale" required>
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Tên Flash Sale <span class="text-red-500">*</span></label>
+                        <input type="text" id="name" name="name" 
+                               value="<?php echo htmlspecialchars($old['name']); ?>"
+                               placeholder="Nhập tên flash sale" 
+                               class="w-full px-4 py-2 border <?= isset($validationErrors['name']) ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]' ?> rounded-xl focus:outline-none focus:ring-2 transition-colors"
+                               required>
                         <?php if (isset($validationErrors['name'])): ?>
-                            <div class="form-error"><?php echo $validationErrors['name']; ?></div>
+                            <p class="mt-2 text-sm text-red-500 flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> <?php echo $validationErrors['name']; ?></p>
                         <?php endif; ?>
                     </div>
 
-                    <!-- Thời gian bắt đầu -->
-                    <div class="form-group <?php echo isset($validationErrors['start_time']) ? 'error' : ''; ?>">
-                        <label for="start_time">Thời gian bắt đầu <span style="color: red;">*</span></label>
-                        <input type="datetime-local" id="start_time" name="start_time"
-                            value="<?php echo str_replace(' ', 'T', $old['start_time']); ?>" required>
-                        <?php if (isset($validationErrors['start_time'])): ?>
-                            <div class="form-error"><?php echo $validationErrors['start_time']; ?></div>
-                        <?php endif; ?>
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Thời gian bắt đầu -->
+                        <div>
+                            <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">Thời gian bắt đầu <span class="text-red-500">*</span></label>
+                            <input type="datetime-local" id="start_time" name="start_time"
+                                   value="<?php echo str_replace(' ', 'T', $old['start_time']); ?>" 
+                                   class="w-full px-4 py-2 border <?= isset($validationErrors['start_time']) ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]' ?> rounded-xl focus:outline-none focus:ring-2 transition-colors"
+                                   required>
+                            <?php if (isset($validationErrors['start_time'])): ?>
+                                <p class="mt-2 text-sm text-red-500 flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> <?php echo $validationErrors['start_time']; ?></p>
+                            <?php endif; ?>
+                        </div>
 
-                    <!-- Thời gian kết thúc -->
-                    <div class="form-group <?php echo isset($validationErrors['end_time']) ? 'error' : ''; ?>">
-                        <label for="end_time">Thời gian kết thúc <span style="color: red;">*</span></label>
-                        <input type="datetime-local" id="end_time" name="end_time"
-                            value="<?php echo str_replace(' ', 'T', $old['end_time']); ?>" required>
-                        <?php if (isset($validationErrors['end_time'])): ?>
-                            <div class="form-error"><?php echo $validationErrors['end_time']; ?></div>
-                        <?php endif; ?>
+                        <!-- Thời gian kết thúc -->
+                        <div>
+                            <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">Thời gian kết thúc <span class="text-red-500">*</span></label>
+                            <input type="datetime-local" id="end_time" name="end_time"
+                                   value="<?php echo str_replace(' ', 'T', $old['end_time']); ?>" 
+                                   class="w-full px-4 py-2 border <?= isset($validationErrors['end_time']) ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35]' ?> rounded-xl focus:outline-none focus:ring-2 transition-colors"
+                                   required>
+                            <?php if (isset($validationErrors['end_time'])): ?>
+                                <p class="mt-2 text-sm text-red-500 flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> <?php echo $validationErrors['end_time']; ?></p>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
                     <!-- Trạng thái -->
-                    <div class="form-group">
-                        <label for="status">Trạng thái <span style="color: red;">*</span></label>
-                        <select id="status" name="status" required>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái <span class="text-red-500">*</span></label>
+                        <select id="status" name="status" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition-colors" required>
                             <option value="1" <?php echo $old['status'] == 1 ? 'selected' : ''; ?>>Hoạt động</option>
                             <option value="0" <?php echo $old['status'] == 0 ? 'selected' : ''; ?>>Khóa</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-submit" style="width: 100%;">Cập nhật Flash Sale</button>
+                    <div class="pt-4 border-t border-gray-100">
+                        <button type="submit" class="w-full px-6 py-2.5 bg-[#FF6B35] text-white rounded-xl hover:bg-[#E55A24] font-medium flex items-center justify-center gap-2 transition-colors">
+                            <i data-lucide="save" class="w-4 h-4"></i> Cập nhật Flash Sale
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Thêm sách vào Flash Sale -->
-            <div class="form-section">
-                <h2>Thêm sách vào Flash Sale</h2>
-                <div class="add-item-form">
-                    <form method="POST" action="<?php echo BASE_URL; ?>admin-flash-sales-add-item">
+            <div class="space-y-6">
+                <!-- Thêm sách vào Flash Sale -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-5 h-5 text-[#FF6B35]"></i>
+                            Thêm sách tham gia
+                        </h2>
+                    </div>
+                    <form method="POST" action="<?php echo BASE_URL; ?>admin-flash-sales-add-item" class="p-6 space-y-5 bg-gray-50/50">
                         <input type="hidden" name="flash_sale_id" value="<?php echo $flashSale['id']; ?>">
 
-                        <div class="form-group">
-                            <label for="book_id">Chọn sách <span style="color: red;">*</span></label>
-                            <select id="book_id" name="book_id">
+                        <div>
+                            <label for="book_id" class="block text-sm font-medium text-gray-700 mb-2">Chọn sách <span class="text-red-500">*</span></label>
+                            <select id="book_id" name="book_id" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] bg-white transition-colors" required>
                                 <option value="">-- Chọn sách --</option>
                                 <?php foreach ($books as $book): ?>
                                     <option value="<?php echo $book['id']; ?>">
-                                        <?php echo htmlspecialchars($book['title']); ?> -
-                                        <?php echo htmlspecialchars($book['author']); ?>
+                                        <?php echo htmlspecialchars($book['title']); ?> - <?php echo htmlspecialchars($book['author']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="discount_percent">Giảm giá (%) <span style="color: red;">*</span></label>
-                            <input type="text" id="discount_percent" name="discount_percent" placeholder="Nhập %"
-                                value="0" required>
-                            <div class="helper-text">Giá bán = Giá gốc × (100 - %)</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="discount_percent" class="block text-sm font-medium text-gray-700 mb-2">Giảm giá (%) <span class="text-red-500">*</span></label>
+                                <input type="number" id="discount_percent" name="discount_percent" placeholder="Nhập %" value="0" min="0" max="100" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition-colors" required>
+                                <p class="mt-1 text-xs text-gray-500">Giảm theo phần trăm</p>
+                            </div>
+
+                            <div>
+                                <label for="sale_price" class="block text-sm font-medium text-gray-700 mb-2">Giá sale (₫) <span class="text-red-500">*</span></label>
+                                <input type="number" id="sale_price" name="sale_price" placeholder="Nhập giá" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition-colors" required>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="sale_price">Giá sale (₫) <span style="color: red;">*</span></label>
-                            <input type="text" id="sale_price" name="sale_price" placeholder="Nhập giá" required>
+                        <div>
+                            <label for="stock_limit" class="block text-sm font-medium text-gray-700 mb-2">Giới hạn số lượng bán</label>
+                            <input type="number" id="stock_limit" name="stock_limit" placeholder="Để trống nếu không giới hạn" value="0" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/20 focus:border-[#FF6B35] transition-colors">
+                            <p class="mt-1 text-xs text-gray-500">Mặc định 0 = Không giới hạn số lượng</p>
                         </div>
 
-                        <div class="form-group">
-                            <label for="stock_limit">Giới hạn số lượng</label>
-                            <input type="text" id="stock_limit" name="stock_limit"
-                                placeholder="Để trống nếu không giới hạn" value="0">
-                            <div class="helper-text">0 = Không giới hạn</div>
+                        <div class="pt-2">
+                            <button type="submit" class="w-full px-4 py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900 font-medium flex items-center justify-center gap-2 transition-colors">
+                                <i data-lucide="download" class="w-4 h-4"></i> Thêm vào danh sách
+                            </button>
                         </div>
-
-                        <button type="submit" class="btn btn-submit" style="width: 100%;">Thêm sách</button>
                     </form>
+                </div>
+
+                <!-- Danh sách sách trong Flash Sale -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-white flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <i data-lucide="list" class="w-5 h-5 text-[#FF6B35]"></i>
+                            Sách trong chương trình
+                        </h2>
+                        <span class="bg-[#FF6B35] text-white text-xs font-bold px-2.5 py-1 rounded-full"><?php echo count($items); ?> sách</span>
+                    </div>
+
+                    <?php if (empty($items)): ?>
+                        <div class="p-8 text-center bg-gray-50/50">
+                            <i data-lucide="inbox" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                            <p class="text-gray-500 text-sm">Chưa có sách nào trong flash sale này.<br>Hãy thêm sách ở ô phía trên.</p>
+                        </div>
+                    <?php else: ?>
+                        <div class="max-h-[500px] overflow-y-auto p-4 space-y-3 bg-gray-50/50">
+                            <?php foreach ($items as $item): ?>
+                                <div class="bg-white p-4 border border-gray-100 rounded-xl shadow-sm flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between transition-all hover:border-[#FF6B35]/50 hover:shadow-md">
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="font-bold text-gray-900 truncate" title="<?php echo htmlspecialchars($item['title']); ?>"><?php echo htmlspecialchars($item['title']); ?></h3>
+                                        <p class="text-xs text-gray-500 mt-1 truncate">Tác giả: <?php echo htmlspecialchars($item['author']); ?></p>
+                                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                                            <span class="text-sm font-medium text-gray-400 line-through"><?php echo number_format($item['price']); ?>₫</span>
+                                            <span class="text-sm font-bold text-[#FF6B35]"><?php echo number_format($item['sale_price']); ?>₫</span>
+                                            <span class="text-[10px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded ml-1">-<?php echo $item['discount_percent']; ?>%</span>
+                                            <?php if ($item['stock_limit'] > 0): ?>
+                                                <span class="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full ml-auto sm:ml-2">SL: <?php echo $item['stock_limit']; ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="shrink-0 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-gray-100 sm:border-0">
+                                        <a href="<?php echo BASE_URL; ?>admin-flash-sales-remove-item?item_id=<?php echo $item['id']; ?>&flash_sale_id=<?php echo $flashSale['id']; ?>"
+                                           class="w-full sm:w-auto px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 hover:bg-red-500 hover:text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5"
+                                           onclick="return confirm('Bạn chắc chắn muốn xóa sách này khỏi flash sale?');">
+                                           <i data-lucide="trash-2" class="w-4 h-4"></i> Xóa
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
 
-        <!-- Danh sách sách trong Flash Sale -->
-        <div class="form-section" style="margin-top: 30px;">
-            <h2>Sách trong Flash Sale (<?php echo count($items); ?> sách)</h2>
-
-            <?php if (empty($items)): ?>
-                <div class="empty-state">
-                    <p>Chưa có sách nào trong flash sale này.</p>
-                </div>
-            <?php else: ?>
-                <div class="items-list">
-                    <?php foreach ($items as $item): ?>
-                        <div class="item-row">
-                            <div class="item-info">
-                                <div class="item-title"><?php echo htmlspecialchars($item['title']); ?></div>
-                                <div class="item-details">
-                                    Tác giả: <?php echo htmlspecialchars($item['author']); ?> |
-                                    Giá gốc: <?php echo number_format($item['price']); ?>₫ |
-                                    Giá sale: <?php echo number_format($item['sale_price']); ?>₫ |
-                                    Giảm: <?php echo $item['discount_percent']; ?>%
-                                    <?php if ($item['stock_limit'] > 0): ?>
-                                        | Giới hạn: <?php echo $item['stock_limit']; ?> cái
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="item-actions">
-                                <a href="<?php echo BASE_URL; ?>admin-flash-sales-remove-item?item_id=<?php echo $item['id']; ?>&flash_sale_id=<?php echo $flashSale['id']; ?>"
-                                    class="btn-small btn-delete-item"
-                                    onclick="return confirm('Bạn chắc chắn muốn xóa sách này khỏi flash sale?');">
-                                    Xóa
-                                </a>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div style="margin-top: 30px;">
-            <a href="<?php echo BASE_URL; ?>admin-flash-sales" class="btn btn-cancel" style="display: inline-block;">←
-                Quay lại</a>
-        </div>
     </div>
-</body>
+</main>
 
-</html>
+<script>
+    // Logic for auto-calculating sale price or discount percent
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookSelect = document.getElementById('book_id');
+        const discountInput = document.getElementById('discount_percent');
+        const priceInput = document.getElementById('sale_price');
+        
+        let originalPrice = 0;
+
+        bookSelect.addEventListener('change', function() {
+            // Need book original prices array in real scenario
+            // For now, assume it's retrieved or leave as manual
+        });
+
+        // Basic calculation placeholders
+        discountInput.addEventListener('input', function() {
+            // If we had originalPrice, calculate salePrice
+            // salePrice = originalPrice * (100 - this.value) / 100
+        });
+        
+        priceInput.addEventListener('input', function() {
+            // If we had originalPrice, calculate discount Input
+        });
+    });
+</script>
+
+<?php include_once './views/components/footer.php'; ?>
