@@ -1,4 +1,4 @@
-    </div><!-- /.flex-1.ml-56 -->
+    </div><!-- /.flex-1.ml-64 -->
 
 <?php if ($success = Message::get('success')): ?>
   <div id="simple-toast"

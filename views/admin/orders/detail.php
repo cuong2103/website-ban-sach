@@ -1,12 +1,10 @@
-<?php include_once './views/components/header.php'; ?>
-<div class="flex h-screen bg-gray-50 overflow-hidden">
-  
-  <?php include_once './views/components/sidebar.php'; ?>
-  
-  <div class="flex-1 flex flex-col h-screen overflow-hidden ml-56">
-      
-      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
-          <div class="max-w-4xl mx-auto">
+<?php 
+include_once './views/components/header.php';
+include_once './views/components/sidebar.php';
+?>
+
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-4xl mx-auto">
               
               <!-- Header -->
               <div class="flex items-center gap-4 mb-6">
@@ -19,7 +17,7 @@
                   </div>
               </div>
 
-              <?php Message::display(); ?>
+              
 
               <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <!-- Cột trái: Thông tin khách + Sản phẩm -->
@@ -166,8 +164,6 @@
                   </div>
               </div>
 
-          </div>
-      </main>
-  </div>
-</div>
+        </div>
+    </main>
 <?php include_once './views/components/footer.php'; ?>
