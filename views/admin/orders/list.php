@@ -1,12 +1,10 @@
-<?php include_once './views/components/header.php'; ?>
-<div class="flex h-screen bg-gray-50 overflow-hidden">
-  
-  <?php include_once './views/components/sidebar.php'; ?>
-  
-  <div class="flex-1 flex flex-col h-screen overflow-hidden ml-56">
-      
-      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
-          <div class="max-w-7xl mx-auto">
+<?php 
+include_once './views/components/header.php';
+include_once './views/components/sidebar.php';
+?>
+
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+    <div class="w-full">
               
               <div class="flex justify-between items-center mb-6">
                   <div>
@@ -15,7 +13,7 @@
                   </div>
               </div>
 
-              <?php Message::display(); ?>
+              
 
               <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                   
@@ -150,8 +148,6 @@
                   <?php endif; ?>
 
               </div>
-          </div>
-      </main>
-  </div>
-</div>
+        </div>
+    </main>
 <?php include_once './views/components/footer.php'; ?>

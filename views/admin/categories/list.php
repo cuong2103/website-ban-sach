@@ -1,316 +1,172 @@
 <?php
 $currentPage = $page;
-$successMessage = Message::get('success');
-$errorMessage = Message::get('error');
 
 $validationErrors = $_SESSION['validation_errors'] ?? [];
 unset($_SESSION['validation_errors']);
+
+include_once './views/components/header.php';
+include_once './views/components/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Danh mục | Admin</title>
-    <link rel="stylesheet" href="<?php echo UPLOADS_URL; ?>../assets/common.css">
-    <style>
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .header-section h1 {
-            margin: 0;
-            color: #333;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .search-box button {
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            padding: 15px;
-            text-align: left;
-            border-bottom: 2px solid #dee2e6;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .table td {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .status {
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status.active {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status.inactive {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-edit,
-        .btn-delete {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-edit {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background-color: #218838;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background-color: #c82333;
-        }
-
-        .message {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 20px;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .pagination a:hover {
-            background-color: #f8f9fa;
-        }
-
-        .pagination .active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .pagination .disabled {
-            color: #999;
-            cursor: not-allowed;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="header-section">
-            <h1>Quản lý Danh mục</h1>
-            <a href="<?php echo BASE_URL; ?>admin-categories-create" class="btn-primary">+ Thêm danh mục</a>
-        </div>
-
-        <?php if ($successMessage): ?>
-            <div class="message success"><?php echo $successMessage; ?></div>
-        <?php endif; ?>
-
-        <?php if ($errorMessage): ?>
-            <div class="message error"><?php echo $errorMessage; ?></div>
-        <?php endif; ?>
-
-        <div class="search-box">
-            <form method="GET" style="display: flex; gap: 10px; flex: 1;">
-                <input type="text" name="search" placeholder="Tìm kiếm theo tên hoặc slug..."
-                    value="<?php echo htmlspecialchars($search); ?>" required>
-                <button type="submit">Tìm kiếm</button>
-                <?php if (!empty($search)): ?>
-                    <a href="<?php echo BASE_URL; ?>admin-categories"
-                        style="padding: 10px 20px; background-color: #6c757d; color: white; border-radius: 5px; text-decoration: none;">Xóa
-                        bộ lọc</a>
-                <?php endif; ?>
-            </form>
-        </div>
-
-        <?php if (empty($categories)): ?>
-            <div class="empty-state">
-                <p>Không có danh mục nào.</p>
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+    <div class="w-full">
+        
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Quản lý Danh mục</h1>
+                <p class="text-sm text-gray-500 mt-1">Danh sách tất cả danh mục sách</p>
             </div>
-        <?php else: ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tên danh mục</th>
-                        <th>Slug</th>
-                        <th>Mô tả</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày tạo</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($categories as $category): ?>
-                        <tr>
-                            <td><?php echo $category['id']; ?></td>
-                            <td><?php echo htmlspecialchars($category['name']); ?></td>
-                            <td><code><?php echo htmlspecialchars($category['slug']); ?></code></td>
-                            <td><?php echo htmlspecialchars(substr($category['description'] ?? '', 0, 50)); ?></td>
-                            <td>
-                                <span class="status <?php echo $category['status'] == 1 ? 'active' : 'inactive'; ?>">
-                                    <?php echo $category['status'] == 1 ? 'Hoạt động' : 'Khóa'; ?>
-                                </span>
-                            </td>
-                            <td><?php echo date('d/m/Y H:i', strtotime($category['created_at'])); ?></td>
-                            <td>
-                                <div class="actions">
-                                    <a href="<?php echo BASE_URL; ?>admin-categories-edit?id=<?php echo $category['id']; ?>"
-                                        class="btn-edit">Sửa</a>
-                                    <a href="<?php echo BASE_URL; ?>admin-categories-delete?id=<?php echo $category['id']; ?>"
-                                        class="btn-delete" onclick="return confirm('Bạn chắc chắn muốn xóa?');">Xóa</a>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <a href="<?= BASE_URL ?>?act=admin-categories-create" class="px-5 py-2.5 bg-[#4CAF50] text-white rounded-xl hover:bg-green-600 transition-colors font-medium flex items-center gap-2 shadow-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i> Thêm danh mục
+            </a>
+        </div>
 
-            <?php if ($totalPages > 1): ?>
-                <div class="pagination">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            
+            <div class="p-4 border-b border-gray-100 bg-gray-50/50">
+                <form action="" method="GET" class="flex flex-wrap gap-4 items-center justify-between">
+                    <input type="hidden" name="act" value="admin-categories">
+                    
+                    <div class="flex flex-1 min-w-[300px] gap-4">
+                        <div class="relative flex-1 max-w-md">
+                            <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" 
+                                   name="search" 
+                                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
+                                   placeholder="Tìm theo tên hoặc slug..." 
+                                   class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50] transition-colors">
+                        </div>
+
+                        <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium">
+                            Lọc
+                        </button>
+                        
+                        <?php if (!empty($_GET['search'])): ?>
+                            <a href="<?= BASE_URL ?>?act=admin-categories" class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl transition-colors font-medium flex items-center gap-2">
+                                <i data-lucide="x" class="w-4 h-4"></i> Xóa lọc
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tên danh mục</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mô tả</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php if (empty($categories)): ?>
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
+                                        <p>Không có danh mục nào.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($categories as $category): ?>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    #<?= $category['id'] ?>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    <?= htmlspecialchars($category['name']) ?>
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    <span class="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg font-mono text-xs"><?= htmlspecialchars($category['slug']) ?></span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 max-w-[200px] truncate">
+                                    <?= htmlspecialchars(substr($category['description'] ?? '', 0, 50)) ?><?= strlen($category['description'] ?? '') > 50 ? '...' : '' ?>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <?php if ($category['status'] == 1): ?>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            Hoạt động
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                            Khóa
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500">
+                                    <?= date('d/m/Y H:i', strtotime($category['created_at'])) ?>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="<?= BASE_URL ?>?act=admin-categories-edit&id=<?= $category['id'] ?>" 
+                                           class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                           title="Sửa">
+                                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                        </a>
+                                        <a href="<?= BASE_URL ?>?act=admin-categories-delete&id=<?= $category['id'] ?>" 
+                                           onclick="return confirm('Bạn chắc chắn muốn xóa danh mục này?');"
+                                           class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                           title="Xóa">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <?php if (!empty($totalPages) && $totalPages > 1): ?>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-wrap items-center justify-between gap-4">
+                <div class="text-sm text-gray-500">
+                    Trang <span class="font-medium text-gray-900"><?= $currentPage ?></span> / <?= $totalPages ?>
+                </div>
+                
+                <div class="flex gap-1">
+                    <?php
+                    $baseUrl = BASE_URL . "?act=admin-categories";
+                    if (!empty($_GET['search'])) $baseUrl .= "&search=" . urlencode($_GET['search']);
+                    ?>
+                    
                     <?php if ($currentPage > 1): ?>
-                        <a
-                            href="<?php echo BASE_URL; ?>admin-categories?page=1<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>">Đầu</a>
-                        <a
-                            href="<?php echo BASE_URL; ?>admin-categories?page=<?php echo $currentPage - 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>">Trước</a>
+                        <a href="<?= $baseUrl ?>&page=1" class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 hidden sm:block">Đầu</a>
+                        <a href="<?= $baseUrl ?>&page=<?= $currentPage - 1 ?>" class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 flex items-center">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </a>
                     <?php endif; ?>
 
                     <?php
                     $start = max(1, $currentPage - 2);
                     $end = min($totalPages, $currentPage + 2);
-
-                    for ($i = $start; $i <= $end; $i++):
-                        ?>
-                        <?php if ($i == $currentPage): ?>
-                            <span class="active"><?php echo $i; ?></span>
-                        <?php else: ?>
-                            <a
-                                href="<?php echo BASE_URL; ?>admin-categories?page=<?php echo $i; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>"><?php echo $i; ?></a>
-                        <?php endif; ?>
+                    for ($i = $start; $i <= $end; $i++): 
+                    ?>
+                        <a href="<?= $baseUrl ?>&page=<?= $i ?>" 
+                           class="px-3 py-1.5 border rounded-lg <?= $i == $currentPage ? 'bg-[#4CAF50] border-[#4CAF50] text-white' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50' ?>">
+                            <?= $i ?>
+                        </a>
                     <?php endfor; ?>
 
                     <?php if ($currentPage < $totalPages): ?>
-                        <a
-                            href="<?php echo BASE_URL; ?>admin-categories?page=<?php echo $currentPage + 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>">Sau</a>
-                        <a
-                            href="<?php echo BASE_URL; ?>admin-categories?page=<?php echo $totalPages; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>">Cuối</a>
+                        <a href="<?= $baseUrl ?>&page=<?= $currentPage + 1 ?>" class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 flex items-center">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="<?= $baseUrl ?>&page=<?= $totalPages ?>" class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 hidden sm:block">Cuối</a>
                     <?php endif; ?>
                 </div>
+            </div>
             <?php endif; ?>
-        <?php endif; ?>
-    </div>
-</body>
 
-</html>
+        </div>
+    </div>
+</main>
+<?php include_once './views/components/footer.php'; ?>
