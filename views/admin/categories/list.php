@@ -24,11 +24,11 @@ include_once './views/components/sidebar.php';
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             
             <div class="p-4 border-b border-gray-100 bg-gray-50/50">
-                <form action="" method="GET" class="flex flex-wrap gap-4 items-center justify-between">
+                <form action="" method="GET" class="flex flex-wrap gap-4 items-center justify-between w-full">
                     <input type="hidden" name="act" value="admin-categories">
                     
-                    <div class="flex flex-1 min-w-[300px] gap-4">
-                        <div class="relative flex-1 max-w-md">
+                    <div class="flex flex-1 gap-4 items-center w-full">
+                        <div class="relative flex-1">
                             <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                             <input type="text" 
                                    name="search" 
@@ -37,12 +37,19 @@ include_once './views/components/sidebar.php';
                                    class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50] transition-colors">
                         </div>
 
-                        <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium">
+                        <div class="relative w-48">
+                            <input type="date" 
+                                   name="date" 
+                                   value="<?= htmlspecialchars($_GET['date'] ?? '') ?>"
+                                   class="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50] transition-colors text-gray-600">
+                        </div>
+
+                        <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors font-medium whitespace-nowrap">
                             Lọc
                         </button>
                         
-                        <?php if (!empty($_GET['search'])): ?>
-                            <a href="<?= BASE_URL ?>?act=admin-categories" class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl transition-colors font-medium flex items-center gap-2">
+                        <?php if (!empty($_GET['search']) || !empty($_GET['date'])): ?>
+                            <a href="<?= BASE_URL ?>?act=admin-categories" class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl transition-colors font-medium flex items-center gap-2 whitespace-nowrap">
                                 <i data-lucide="x" class="w-4 h-4"></i> Xóa lọc
                             </a>
                         <?php endif; ?>
@@ -54,7 +61,6 @@ include_once './views/components/sidebar.php';
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50/50 border-b border-gray-100">
-                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tên danh mục</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Slug</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mô tả</th>
@@ -66,7 +72,7 @@ include_once './views/components/sidebar.php';
                     <tbody class="divide-y divide-gray-100">
                         <?php if (empty($categories)): ?>
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                                     <div class="flex flex-col items-center justify-center gap-2">
                                         <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
                                         <p>Không có danh mục nào.</p>
@@ -76,9 +82,6 @@ include_once './views/components/sidebar.php';
                         <?php else: ?>
                             <?php foreach ($categories as $category): ?>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    #<?= $category['id'] ?>
-                                </td>
                                 <td class="px-6 py-4 font-medium text-gray-900">
                                     <?= htmlspecialchars($category['name']) ?>
                                 </td>
@@ -106,6 +109,11 @@ include_once './views/components/sidebar.php';
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
+                                        <a href="<?= BASE_URL ?>?act=admin-categories-detail&id=<?= $category['id'] ?>" 
+                                           class="p-2 text-green-500 hover:bg-green-50 rounded-lg transition-colors"
+                                           title="Xem chi tiết">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </a>
                                         <a href="<?= BASE_URL ?>?act=admin-categories-edit&id=<?= $category['id'] ?>" 
                                            class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                                            title="Sửa">
@@ -136,6 +144,7 @@ include_once './views/components/sidebar.php';
                     <?php
                     $baseUrl = BASE_URL . "?act=admin-categories";
                     if (!empty($_GET['search'])) $baseUrl .= "&search=" . urlencode($_GET['search']);
+                    if (!empty($_GET['date'])) $baseUrl .= "&date=" . urlencode($_GET['date']);
                     ?>
                     
                     <?php if ($currentPage > 1): ?>

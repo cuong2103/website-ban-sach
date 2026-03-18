@@ -11,7 +11,7 @@ class CategoryModel
     /**
      * Lấy tất cả danh mục
      */
-    public function getAll($search = '', $limit = 10, $offset = 0)
+    public function getAll($search = '', $date = '', $limit = 10, $offset = 0)
     {
         $query = "
       SELECT 
@@ -30,7 +30,11 @@ class CategoryModel
             $query .= " AND (name LIKE ? OR slug LIKE ?)";
         }
 
-        $query .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        if (!empty($date)) {
+            $query .= " AND DATE(created_at) = ?";
+        }
+
+        $query .= " ORDER BY category_id DESC LIMIT ? OFFSET ?";
 
         $stmt = $this->conn->prepare($query);
 
@@ -38,6 +42,10 @@ class CategoryModel
         if (!empty($search)) {
             $stmt->bindValue($paramIndex++, '%' . $search . '%', PDO::PARAM_STR);
             $stmt->bindValue($paramIndex++, '%' . $search . '%', PDO::PARAM_STR);
+        }
+
+        if (!empty($date)) {
+            $stmt->bindValue($paramIndex++, $date, PDO::PARAM_STR);
         }
 
         $stmt->bindValue($paramIndex++, (int) $limit, PDO::PARAM_INT);
@@ -51,7 +59,7 @@ class CategoryModel
     /**
      * Đếm tổng số danh mục
      */
-    public function countAll($search = '')
+    public function countAll($search = '', $date = '')
     {
         $query = "SELECT COUNT(*) as total FROM categories WHERE 1=1";
 
@@ -59,11 +67,21 @@ class CategoryModel
             $query .= " AND (name LIKE ? OR slug LIKE ?)";
         }
 
+        if (!empty($date)) {
+            $query .= " AND DATE(created_at) = ?";
+        }
+
         $stmt = $this->conn->prepare($query);
 
+        $paramIndex = 1;
+
         if (!empty($search)) {
-            $stmt->bindValue(1, '%' . $search . '%', PDO::PARAM_STR);
-            $stmt->bindValue(2, '%' . $search . '%', PDO::PARAM_STR);
+            $stmt->bindValue($paramIndex++, '%' . $search . '%', PDO::PARAM_STR);
+            $stmt->bindValue($paramIndex++, '%' . $search . '%', PDO::PARAM_STR);
+        }
+
+        if (!empty($date)) {
+            $stmt->bindValue($paramIndex++, $date, PDO::PARAM_STR);
         }
 
         $stmt->execute();

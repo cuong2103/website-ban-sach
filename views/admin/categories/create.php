@@ -4,215 +4,105 @@ $old = $_SESSION['old'] ?? [];
 
 unset($_SESSION['validation_errors']);
 unset($_SESSION['old']);
+
+include_once './views/components/header.php';
+include_once './views/components/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm danh mục | Admin</title>
-    <link rel="stylesheet" href="<?php echo UPLOADS_URL; ?>../assets/common.css">
-    <style>
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .form-header {
-            margin-bottom: 30px;
-        }
-
-        .form-header h1 {
-            color: #333;
-            margin: 0 0 10px 0;
-        }
-
-        .form-header a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .form-header a:hover {
-            text-decoration: underline;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        input[type="text"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-        }
-
-        input[type="text"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .form-error {
-            color: #721c24;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .form-group.error input,
-        .form-group.error textarea,
-        .form-group.error select {
-            border-color: #dc3545;
-        }
-
-        .form-group.error input:focus,
-        .form-group.error textarea:focus,
-        .form-group.error select:focus {
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-submit {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-cancel {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-cancel:hover {
-            background-color: #5a6268;
-        }
-
-        .helper-text {
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        .slug-preview {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <div class="form-header">
-            <h1>Thêm danh mục mới</h1>
-            <a href="<?php echo BASE_URL; ?>admin-categories">← Quay lại danh sách</a>
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+    <div class="w-full">
+              
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-6">
+            <a href="<?= BASE_URL ?>?act=admin-categories" class="p-2 bg-white text-gray-500 rounded-xl hover:bg-gray-50 border border-gray-200 transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Thêm danh mục mới</h1>
+                <p class="text-sm text-gray-500 mt-1">Tạo một danh mục sách mới để quản lý</p>
+            </div>
         </div>
 
-        <form method="POST" action="<?php echo BASE_URL; ?>admin-categories-store">
-            <!-- Tên danh mục -->
-            <div class="form-group <?php echo isset($validationErrors['name']) ? 'error' : ''; ?>">
-                <label for="name">Tên danh mục <span style="color: red;">*</span></label>
-                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($old['name'] ?? ''); ?>"
-                    placeholder="Nhập tên danh mục" required>
-                <?php if (isset($validationErrors['name'])): ?>
-                    <div class="form-error"><?php echo $validationErrors['name']; ?></div>
-                <?php endif; ?>
-            </div>
+        <!-- Form Box -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <form method="POST" action="<?= BASE_URL ?>?act=admin-categories-store" class="p-6 space-y-6">
+                
+                <!-- Tên danh mục -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Tên danh mục <span class="text-red-500">*</span></label>
+                    <input type="text" id="name" name="name" 
+                           value="<?= htmlspecialchars($old['name'] ?? '') ?>"
+                           placeholder="Nhập tên danh mục (vd: Tiểu thuyết, Sách khoa học...)" 
+                           class="w-full px-4 py-2 border <?= isset($validationErrors['name']) ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50]' ?> rounded-xl focus:outline-none focus:ring-2 transition-colors"
+                           required>
+                    <?php if (isset($validationErrors['name'])): ?>
+                        <p class="mt-2 text-sm text-red-500 flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> <?= $validationErrors['name'] ?></p>
+                    <?php endif; ?>
+                </div>
 
-            <!-- Slug -->
-            <div class="form-group <?php echo isset($validationErrors['slug']) ? 'error' : ''; ?>">
-                <label for="slug">Slug <span style="color: red;">*</span></label>
-                <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($old['slug'] ?? ''); ?>"
-                    placeholder="Nhập slug (ví dụ: sach-hay)" required>
-                <?php if (isset($validationErrors['slug'])): ?>
-                    <div class="form-error"><?php echo $validationErrors['slug']; ?></div>
-                <?php endif; ?>
-                <div class="helper-text">Slug chỉ có thể chứa chữ thường, số và dấu gạch ngang</div>
-            </div>
+                <!-- Slug -->
+                <div>
+                    <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">Đường dẫn tĩnh (Slug) <span class="text-red-500">*</span></label>
+                    <input type="text" id="slug" name="slug" 
+                           value="<?= htmlspecialchars($old['slug'] ?? '') ?>"
+                           placeholder="vd: tieu-thuyet" 
+                           class="w-full px-4 py-2 border <?= isset($validationErrors['slug']) ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50]' ?> bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:bg-white transition-colors"
+                           required>
+                    <?php if (isset($validationErrors['slug'])): ?>
+                        <p class="mt-2 text-sm text-red-500 flex items-center gap-1"><i data-lucide="alert-circle" class="w-4 h-4"></i> <?= $validationErrors['slug'] ?></p>
+                    <?php else: ?>
+                        <p class="mt-2 text-xs text-gray-500">Slug được tạo tự động từ tên danh mục, chỉ chứa chữ thường, số và gạch ngang.</p>
+                    <?php endif; ?>
+                </div>
 
-            <!-- Mô tả -->
-            <div class="form-group">
-                <label for="description">Mô tả</label>
-                <textarea id="description" name="description"
-                    placeholder="Nhập mô tả danh mục (không bắt buộc)"><?php echo htmlspecialchars($old['description'] ?? ''); ?></textarea>
-                <div class="helper-text">Mục này không bắt buộc</div>
-            </div>
+                <!-- Trạng thái -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái hiển thị <span class="text-red-500">*</span></label>
+                    <select id="status" name="status" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50] transition-colors" required>
+                        <option value="1" <?= ($old['status'] ?? 1) == 1 ? 'selected' : '' ?>>Hoạt động</option>
+                        <option value="0" <?= ($old['status'] ?? 1) == 0 ? 'selected' : '' ?>>Khóa</option>
+                    </select>
+                </div>
 
-            <!-- Trạng thái -->
-            <div class="form-group">
-                <label for="status">Trạng thái <span style="color: red;">*</span></label>
-                <select id="status" name="status" required>
-                    <option value="1" <?php echo ($old['status'] ?? 1) == 1 ? 'selected' : ''; ?>>Hoạt động</option>
-                    <option value="0" <?php echo ($old['status'] ?? 1) == 0 ? 'selected' : ''; ?>>Khóa</option>
-                </select>
-            </div>
+                <!-- Mô tả -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Mô tả danh mục</label>
+                    <textarea id="description" name="description" rows="4"
+                              placeholder="Nhập nội dung mô tả..."
+                              class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4CAF50]/20 focus:border-[#4CAF50] transition-colors resize-y"><?= htmlspecialchars($old['description'] ?? '') ?></textarea>
+                    <p class="mt-2 text-xs text-gray-500">Không bắt buộc.</p>
+                </div>
 
-            <!-- Nút hành động -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-submit">Thêm danh mục</button>
-                <a href="<?php echo BASE_URL; ?>admin-categories" class="btn btn-cancel">Hủy</a>
-            </div>
-        </form>
+                <!-- Actions -->
+                <div class="pt-6 border-t border-gray-100 flex items-center justify-end gap-3">
+                    <a href="<?= BASE_URL ?>?act=admin-categories" class="px-6 py-2.5 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors">
+                        Hủy bỏ
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 bg-[#4CAF50] text-white rounded-xl hover:bg-green-600 font-medium flex items-center gap-2 transition-colors">
+                        <i data-lucide="save" class="w-4 h-4"></i> Lưu danh mục
+                    </button>
+                </div>
+
+            </form>
+        </div>
     </div>
+</main>
 
-    <script>
-        // Tự động generate slug từ tên
-        document.getElementById('name').addEventListener('blur', function () {
-            const name = this.value.trim();
-            if (name && !document.getElementById('slug').value) {
-                const slug = name
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-                document.getElementById('slug').value = slug;
-            }
-        });
-    </script>
-</body>
+<script>
+    // Tự động generate slug từ tên
+    document.getElementById('name').addEventListener('blur', function () {
+        const name = this.value.trim();
+        if (name && !document.getElementById('slug').value) {
+            const slug = name
+                .toLowerCase()
+                .normalize('NFD') // Tách dấu ra khỏi chữ
+                .replace(/[\u0300-\u036f]/g, '') // Bỏ dấu
+                .replace(/đ/g, 'd').replace(/Đ/g, 'D') // Xử lý chữ đ
+                .replace(/[^a-z0-9]+/g, '-') // Thay các ký tự không phải chữ/số thành gạch ngang
+                .replace(/^-+|-+$/g, ''); // Bỏ gạch ngang thừa ở đầu/cuối
+            document.getElementById('slug').value = slug;
+        }
+    });
+</script>
 
-</html>
+<?php include_once './views/components/footer.php'; ?>
