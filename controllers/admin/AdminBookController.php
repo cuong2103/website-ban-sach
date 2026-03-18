@@ -13,15 +13,18 @@ class AdminBookController
 
     public function list()
     {
+        requireAdmin();
+
         $search = trim($_GET['search'] ?? '');
         $category = trim($_GET['category'] ?? '');
+        $status_filter = $_GET['status_filter'] ?? '';
         $page = (int)($_GET['page'] ?? 1);
         $page = $page < 1 ? 1 : $page;
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
-        $books = $this->bookModel->getAdminAll($search, $category, $limit, $offset);
-        $total = $this->bookModel->countAdminAll($search, $category);
+        $books = $this->bookModel->getAdminAll($search, $category, $status_filter, $limit, $offset);
+        $total = $this->bookModel->countAdminAll($search, $category, $status_filter);
         $totalPages = ceil($total / $limit);
 
         $categories = $this->categoryModel->getAll();
@@ -31,6 +34,8 @@ class AdminBookController
 
     public function create()
     {
+        requireAdmin();
+
         $categories = $this->categoryModel->getAll();
         $authors = $this->bookModel->getDistinctAuthors();
         $publishers = $this->bookModel->getDistinctPublishers();
@@ -44,32 +49,44 @@ class AdminBookController
 
     public function store()
     {
+        requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'category_id' => $_POST['category_id'] ?? '',
-                'title' => $_POST['title'] ?? '',
-                'author' => $_POST['author'] ?? '',
-                'publisher' => $_POST['publisher'] ?? '',
-                'price' => $_POST['price'] ?? '',
-                'sale_price' => $_POST['sale_price'] ?? '',
+                'title'       => $_POST['title'] ?? '',
+                'author'      => $_POST['author'] ?? '',
+                'publisher'   => $_POST['publisher'] ?? '',
+                'price'       => $_POST['price'] ?? '',
+                'sale_price'  => $_POST['sale_price'] ?? '',
                 'description' => $_POST['description'] ?? '',
-                'weight' => $_POST['weight'] ?? '',
-                'dimensions' => $_POST['dimensions'] ?? '',
-                'cover_type' => $_POST['cover_type'] ?? 'Bìa mềm',
-                'stock' => $_POST['stock'] ?? 0,
-                'status' => isset($_POST['status']) ? 1 : 0,
-                'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
-                'is_bestseller' => isset($_POST['is_bestseller']) ? 1 : 0,
+                'weight'      => $_POST['weight'] ?? '',
+                'dimensions'  => $_POST['dimensions'] ?? '',
+                'cover_type'  => $_POST['cover_type'] ?? 'Bìa mềm',
+                'stock'       => $_POST['stock'] ?? 0,
+                'status'      => isset($_POST['status']) ? 1 : 0,
+                'is_featured'    => isset($_POST['is_featured']) ? 1 : 0,
+                'is_bestseller'  => isset($_POST['is_bestseller']) ? 1 : 0,
             ];
 
             // Validation
             $rules = [
-                'title' => 'required|max:255',
+                'title'       => 'required|max:255',
                 'category_id' => 'required|numeric',
-                'author' => 'required|max:150',
-                'price' => 'required|numeric',
+                'author'      => 'required|max:150',
+                'price'       => 'required|numeric',
             ];
             $errors = validate($data, $rules);
+
+            // Kiểm tra giá khuyến mãi phải nhỏ hơn giá gốc
+            if (!empty($data['sale_price']) && is_numeric($data['sale_price']) && is_numeric($data['price'])) {
+                if ((float)$data['sale_price'] >= (float)$data['price']) {
+                    $errors['sale_price'][] = 'Giá khuyến mãi phải nhỏ hơn giá gốc.';
+                }
+                if ((float)$data['sale_price'] < 0) {
+                    $errors['sale_price'][] = 'Giá khuyến mãi không được âm.';
+                }
+            }
 
             if (!empty($errors)) {
                 $_SESSION['errors'] = $errors;
@@ -81,8 +98,12 @@ class AdminBookController
             // Thumbnail Upload
             $thumbnailPath = '';
             if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == UPLOAD_ERR_OK) {
-                // Resize and compress
-                $thumbnailPath = uploadAndCompressImage($_FILES['thumbnail'], '/uploads/books/');
+                $thumbnailPath = uploadFile($_FILES['thumbnail'], '/uploads/books/');
+                if (!$thumbnailPath) {
+                    $_SESSION['old'] = $_POST;
+                    Message::set('error', 'Ảnh bìa không hợp lệ hoặc quá lớn. Chỉ chấp nhận JPG, PNG, WEBP.');
+                    redirect('admin-books-create');
+                }
             }
             $data['thumbnail'] = $thumbnailPath;
 
@@ -97,13 +118,13 @@ class AdminBookController
                     for ($i = 0; $i < $totalFiles; $i++) {
                         if ($_FILES['gallery_images']['error'][$i] == UPLOAD_ERR_OK) {
                             $file = [
-                                'name' => $_FILES['gallery_images']['name'][$i],
-                                'type' => $_FILES['gallery_images']['type'][$i],
+                                'name'     => $_FILES['gallery_images']['name'][$i],
+                                'type'     => $_FILES['gallery_images']['type'][$i],
                                 'tmp_name' => $_FILES['gallery_images']['tmp_name'][$i],
-                                'error' => $_FILES['gallery_images']['error'][$i],
-                                'size' => $_FILES['gallery_images']['size'][$i]
+                                'error'    => $_FILES['gallery_images']['error'][$i],
+                                'size'     => $_FILES['gallery_images']['size'][$i]
                             ];
-                            $imgPath = uploadAndCompressImage($file, '/uploads/books/');
+                            $imgPath = uploadFile($file, '/uploads/books/');
                             if ($imgPath) {
                                 $this->bookModel->addBookImage($bookId, $imgPath);
                             }
@@ -123,6 +144,8 @@ class AdminBookController
 
     public function edit()
     {
+        requireAdmin();
+
         $id = $_GET['id'] ?? 0;
         $book = $this->bookModel->getAdminById($id);
 
@@ -145,6 +168,8 @@ class AdminBookController
 
     public function update()
     {
+        requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id = $_POST['book_id'] ?? 0;
             $book = $this->bookModel->getAdminById($id);
@@ -156,29 +181,39 @@ class AdminBookController
 
             $data = [
                 'category_id' => $_POST['category_id'] ?? '',
-                'title' => $_POST['title'] ?? '',
-                'author' => $_POST['author'] ?? '',
-                'publisher' => $_POST['publisher'] ?? '',
-                'price' => $_POST['price'] ?? '',
-                'sale_price' => $_POST['sale_price'] ?? '',
+                'title'       => $_POST['title'] ?? '',
+                'author'      => $_POST['author'] ?? '',
+                'publisher'   => $_POST['publisher'] ?? '',
+                'price'       => $_POST['price'] ?? '',
+                'sale_price'  => $_POST['sale_price'] ?? '',
                 'description' => $_POST['description'] ?? '',
-                'weight' => $_POST['weight'] ?? '',
-                'dimensions' => $_POST['dimensions'] ?? '',
-                'cover_type' => $_POST['cover_type'] ?? 'Bìa mềm',
-                'stock' => $_POST['stock'] ?? 0,
-                'status' => isset($_POST['status']) ? 1 : 0,
-                'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
-                'is_bestseller' => isset($_POST['is_bestseller']) ? 1 : 0,
+                'weight'      => $_POST['weight'] ?? '',
+                'dimensions'  => $_POST['dimensions'] ?? '',
+                'cover_type'  => $_POST['cover_type'] ?? 'Bìa mềm',
+                'stock'       => $_POST['stock'] ?? 0,
+                'status'      => isset($_POST['status']) ? 1 : 0,
+                'is_featured'    => isset($_POST['is_featured']) ? 1 : 0,
+                'is_bestseller'  => isset($_POST['is_bestseller']) ? 1 : 0,
             ];
 
             // Validation
             $rules = [
-                'title' => 'required|max:255',
+                'title'       => 'required|max:255',
                 'category_id' => 'required|numeric',
-                'author' => 'required|max:150',
-                'price' => 'required|numeric',
+                'author'      => 'required|max:150',
+                'price'       => 'required|numeric',
             ];
             $errors = validate($data, $rules);
+
+            // Kiểm tra giá khuyến mãi phải nhỏ hơn giá gốc
+            if (!empty($data['sale_price']) && is_numeric($data['sale_price']) && is_numeric($data['price'])) {
+                if ((float)$data['sale_price'] >= (float)$data['price']) {
+                    $errors['sale_price'][] = 'Giá khuyến mãi phải nhỏ hơn giá gốc.';
+                }
+                if ((float)$data['sale_price'] < 0) {
+                    $errors['sale_price'][] = 'Giá khuyến mãi không được âm.';
+                }
+            }
 
             if (!empty($errors)) {
                 $_SESSION['errors'] = $errors;
@@ -187,13 +222,19 @@ class AdminBookController
                 redirect('admin-books-edit&id=' . $id);
             }
 
-            // Thumbnail Upload
+            // Xử lý xóa thumbnail cũ (khi admin click "Xóa ảnh bìa")
+            if (!empty($_POST['delete_thumbnail']) && $book['thumbnail']) {
+                deleteFile($book['thumbnail']);
+                $data['thumbnail'] = '';
+            }
+
+            // Thumbnail Upload (ảnh mới)
             if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == UPLOAD_ERR_OK) {
-                $thumbnailPath = uploadAndCompressImage($_FILES['thumbnail'], '/uploads/books/');
+                $thumbnailPath = uploadFile($_FILES['thumbnail'], '/uploads/books/');
                 if ($thumbnailPath) {
-                    $data['thumbnail'] = $thumbnailPath;
-                    // Delete old thumbnail
+                    // Xóa ảnh cũ
                     if ($book['thumbnail']) deleteFile($book['thumbnail']);
+                    $data['thumbnail'] = $thumbnailPath;
                 }
             }
 
@@ -217,13 +258,13 @@ class AdminBookController
                     for ($i = 0; $i < $totalFiles; $i++) {
                         if ($_FILES['gallery_images']['error'][$i] == UPLOAD_ERR_OK) {
                             $file = [
-                                'name' => $_FILES['gallery_images']['name'][$i],
-                                'type' => $_FILES['gallery_images']['type'][$i],
+                                'name'     => $_FILES['gallery_images']['name'][$i],
+                                'type'     => $_FILES['gallery_images']['type'][$i],
                                 'tmp_name' => $_FILES['gallery_images']['tmp_name'][$i],
-                                'error' => $_FILES['gallery_images']['error'][$i],
-                                'size' => $_FILES['gallery_images']['size'][$i]
+                                'error'    => $_FILES['gallery_images']['error'][$i],
+                                'size'     => $_FILES['gallery_images']['size'][$i]
                             ];
-                            $imgPath = uploadAndCompressImage($file, '/uploads/books/');
+                            $imgPath = uploadFile($file, '/uploads/books/');
                             if ($imgPath) {
                                 $this->bookModel->addBookImage($id, $imgPath);
                             }
@@ -243,6 +284,8 @@ class AdminBookController
 
     public function delete()
     {
+        requireAdmin();
+
         $id = $_GET['id'] ?? 0;
         $book = $this->bookModel->getAdminById($id);
 
@@ -251,7 +294,7 @@ class AdminBookController
             redirect('admin-books');
         }
 
-        // Must delete image files before deleting record (if successful)
+        // Lấy gallery trước khi xóa record
         $thumbnail = $book['thumbnail'];
         $gallery = $this->bookModel->getBookImages($id);
 
@@ -261,7 +304,7 @@ class AdminBookController
             foreach ($gallery as $img) {
                 deleteFile($img['image_url']);
             }
-            Message::set('success', 'Xóa sách thành công!');
+            Message::set('success', 'Đã xóa sách "' . $book['title'] . '" thành công!');
         } else {
             Message::set('error', $result['message']);
         }
@@ -271,6 +314,8 @@ class AdminBookController
 
     public function detail()
     {
+        requireAdmin();
+
         $id = $_GET['id'] ?? 0;
         $book = $this->bookModel->getAdminById($id);
 
@@ -282,5 +327,34 @@ class AdminBookController
         $bookImages = $this->bookModel->getBookImages($id);
         
         require_once './views/admin/books/detail.php';
+    }
+
+    public function toggleStatus()
+    {
+        requireAdmin();
+
+        $id = $_GET['id'] ?? 0;
+        $book = $this->bookModel->getAdminById($id);
+
+        if (!$book) {
+            Message::set('error', 'Sách không tồn tại!');
+            redirect('admin-books');
+        }
+
+        $result = $this->bookModel->toggleStatus($id);
+        if ($result['ok']) {
+            $newStatus = $book['status'] == 1 ? 'ẩn' : 'hiển thị';
+            Message::set('success', 'Đã chuyển sách "' . $book['title'] . '" sang trạng thái ' . $newStatus . '!');
+        } else {
+            Message::set('error', $result['message']);
+        }
+
+        // Redirect về trang list và giữ nguyên filter
+        $back = '';
+        if (!empty($_GET['search'])) $back .= '&search=' . urlencode($_GET['search']);
+        if (!empty($_GET['category'])) $back .= '&category=' . urlencode($_GET['category']);
+        if (!empty($_GET['page'])) $back .= '&page=' . (int)$_GET['page'];
+
+        redirect('admin-books' . $back);
     }
 }

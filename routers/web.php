@@ -75,6 +75,7 @@ match ($act) {
   'admin-books-update' => (new AdminBookController())->update(),
   'admin-books-delete' => (new AdminBookController())->delete(),
   'admin-books-detail' => (new AdminBookController())->detail(),
+  'admin-books-toggle-status' => (new AdminBookController())->toggleStatus(),
 
   // ─── Error pages ──────────────────────────────────────────────────
   '403' => require_once './views/forbidden.php',
