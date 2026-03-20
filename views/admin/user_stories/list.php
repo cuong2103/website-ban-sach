@@ -8,7 +8,17 @@ $errorMessage = Message::get('error');
 $search = htmlspecialchars($_GET['search'] ?? '');
 $epicFilter = htmlspecialchars($_GET['epic'] ?? '');
 $statusFilter = htmlspecialchars($_GET['status'] ?? '');
+$sortField = htmlspecialchars($_GET['sort'] ?? 'rank');
+$sortDir = htmlspecialchars($_GET['dir'] ?? 'asc');
 $currentPage = $page;
+
+function buildSortUrl($field, $currentSort, $currentDir) {
+    $newDir = 'asc';
+    if ($field === $currentSort) {
+        $newDir = $currentDir === 'asc' ? 'desc' : 'asc';
+    }
+    return BASE_URL . 'admin-user-stories?sort=' . urlencode($field) . '&dir=' . urlencode($newDir);
+}
 ?>
 
 <main class="flex-1 overflow-y-auto p-5">
@@ -52,26 +62,39 @@ $currentPage = $page;
   <?php if (empty($stories)): ?>
     <div class="p-6 bg-white rounded-lg shadow text-center text-gray-400">Không tìm thấy user story nào.</div>
   <?php else: ?>
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
-      <table class="w-full border-collapse">
-        <thead class="bg-[#f3f4f6]">
-          <tr>
-            <th class="px-3 py-2 border">ID</th>
-            <th class="px-3 py-2 border">Epic</th>
-            <th class="px-3 py-2 border">User Story</th>
-            <th class="px-3 py-2 border">As</th>
-            <th class="px-3 py-2 border">I want</th>
-            <th class="px-3 py-2 border">So that</th>
-            <th class="px-3 py-2 border">Priority</th>
-            <th class="px-3 py-2 border">Story Point</th>
-            <th class="px-3 py-2 border">Rank</th>
-            <th class="px-3 py-2 border">Status</th>
-            <th class="px-3 py-2 border">Action</th>
-          </tr>
-        </thead>
-        <tbody>
+    <form method="POST" action="<?= BASE_URL ?>admin-user-stories-bulk">
+      <div class="mb-2 flex items-center gap-2">
+        <select name="bulk_action" class="border border-gray-300 rounded px-2 py-1">
+          <option value="">Chọn hành động</option>
+          <option value="mark_done">Toggle trạng thái</option>
+          <option value="delete">Xóa chọn</option>
+        </select>
+        <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded">Thực hiện</button>
+        <span class="text-xs text-gray-500">* Chọn ít nhất 1 dòng</span>
+      </div>
+
+      <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <table class="w-full border-collapse">
+          <thead class="bg-[#f3f4f6]">
+            <tr>
+              <th class="px-3 py-2 border"><input type="checkbox" id="select_all" onclick="document.querySelectorAll('.select-row').forEach(cb => cb.checked = this.checked);" /></th>
+              <th class="px-3 py-2 border"><a href="<?= buildSortUrl('id', $sortField, $sortDir) ?>">ID<?= $sortField === 'id' ? ($sortDir === 'asc' ? ' ↑' : ' ↓') : '' ?></a></th>
+              <th class="px-3 py-2 border"><a href="<?= buildSortUrl('epic', $sortField, $sortDir) ?>">Epic<?= $sortField === 'epic' ? ($sortDir === 'asc' ? ' ↑' : ' ↓') : '' ?></a></th>
+              <th class="px-3 py-2 border">User Story</th>
+              <th class="px-3 py-2 border">As</th>
+              <th class="px-3 py-2 border">I want</th>
+              <th class="px-3 py-2 border">So that</th>
+              <th class="px-3 py-2 border"><a href="<?= buildSortUrl('priority', $sortField, $sortDir) ?>">Priority<?= $sortField === 'priority' ? ($sortDir === 'asc' ? ' ↑' : ' ↓') : '' ?></a></th>
+              <th class="px-3 py-2 border">Story Point</th>
+              <th class="px-3 py-2 border"><a href="<?= buildSortUrl('rank', $sortField, $sortDir) ?>">Rank<?= $sortField === 'rank' ? ($sortDir === 'asc' ? ' ↑' : ' ↓') : '' ?></a></th>
+              <th class="px-3 py-2 border"><a href="<?= buildSortUrl('status', $sortField, $sortDir) ?>">Status<?= $sortField === 'status' ? ($sortDir === 'asc' ? ' ↑' : ' ↓') : '' ?></a></th>
+              <th class="px-3 py-2 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
           <?php foreach ($stories as $story): ?>
             <tr class="hover:bg-gray-50">
+              <td class="px-3 py-2 border"><input type="checkbox" class="select-row" name="selected_ids[]" value="<?= htmlspecialchars($story['id']) ?>" /></td>
               <td class="px-3 py-2 border text-sm font-semibold"><?= htmlspecialchars($story['id']) ?></td>
               <td class="px-3 py-2 border text-sm"><?= htmlspecialchars($story['epic']) ?></td>
               <td class="px-3 py-2 border text-sm"><?= htmlspecialchars($story['user_story']) ?></td>
@@ -94,6 +117,7 @@ $currentPage = $page;
         </tbody>
       </table>
     </div>
+  </form>
 
     <?php if ($totalPages > 1): ?>
       <div class="mt-4 flex justify-center gap-1"> 

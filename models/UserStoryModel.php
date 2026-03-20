@@ -14,7 +14,7 @@ class UserStoryModel
         $this->stories = $_SESSION[self::SESSION_KEY];
     }
 
-    public function getAll($search = '', $epic = '', $status = '', $limit = 10, $offset = 0, &$total = 0)
+    public function getAll($search = '', $epic = '', $status = '', $limit = 10, $offset = 0, &$total = 0, $sortField = 'rank', $sortDir = 'asc')
     {
         $data = $this->stories;
 
@@ -37,13 +37,60 @@ class UserStoryModel
             $data = array_filter($data, fn($item) => $item['status'] === $status);
         }
 
-        // Sắp xếp theo rank tăng dần
-        usort($data, function ($a, $b) {
-            return $a['rank'] <=> $b['rank'];
+        $allowedSortFields = ['id', 'epic', 'rank', 'priority', 'status'];
+        if (!in_array($sortField, $allowedSortFields, true)) {
+            $sortField = 'rank';
+        }
+        $sortDir = strtolower($sortDir) === 'desc' ? 'desc' : 'asc';
+
+        usort($data, function ($a, $b) use ($sortField, $sortDir) {
+            $valA = $a[$sortField] ?? '';
+            $valB = $b[$sortField] ?? '';
+
+            if (is_numeric($valA) && is_numeric($valB)) {
+                $cmp = $valA <=> $valB;
+            } else {
+                $cmp = strcmp((string)$valA, (string)$valB);
+            }
+
+            return $sortDir === 'asc' ? $cmp : -$cmp;
         });
 
         $total = count($data);
         return array_slice($data, $offset, $limit);
+    }
+
+    public function deleteMany(array $ids)
+    {
+        $removed = false;
+        foreach ($ids as $id) {
+            foreach ($this->stories as $idx => $story) {
+                if ($story['id'] === $id) {
+                    array_splice($this->stories, $idx, 1);
+                    $removed = true;
+                    break;
+                }
+            }
+        }
+        if ($removed) {
+            $this->save();
+        }
+        return $removed;
+    }
+
+    public function toggleStatusMany(array $ids)
+    {
+        $updated = false;
+        foreach ($this->stories as $idx => $story) {
+            if (in_array($story['id'], $ids, true)) {
+                $this->stories[$idx]['status'] = $story['status'] === 'To do' ? 'Done' : 'To do';
+                $updated = true;
+            }
+        }
+        if ($updated) {
+            $this->save();
+        }
+        return $updated;
     }
 
     public function getById($id)

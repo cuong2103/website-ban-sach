@@ -20,11 +20,41 @@ class UserStoryController
         $limit = 10;
         $offset = ($page - 1) * $limit;
 
+        $sortField = trim($_GET['sort'] ?? 'rank');
+        $sortDir = trim($_GET['dir'] ?? 'asc');
+
         $total = 0;
-        $stories = $this->userStoryModel->getAll($search, $epic, $status, $limit, $offset, $total);
+        $stories = $this->userStoryModel->getAll($search, $epic, $status, $limit, $offset, $total, $sortField, $sortDir);
         $totalPages = (int)ceil($total / $limit);
 
         require_once './views/admin/user_stories/list.php';
+    }
+
+    public function bulkAction()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('admin-user-stories');
+        }
+
+        $selected = $_POST['selected_ids'] ?? [];
+        if (!is_array($selected) || empty($selected)) {
+            Message::set('error', 'Vui lòng chọn ít nhất 1 user story.');
+            redirect('admin-user-stories');
+        }
+
+        $action = $_POST['bulk_action'] ?? '';
+
+        if ($action === 'mark_done') {
+            $this->userStoryModel->toggleStatusMany($selected);
+            Message::set('success', 'Đã chuyển trạng thái chọn thành Done/To do.');
+        } elseif ($action === 'delete') {
+            $this->userStoryModel->deleteMany($selected);
+            Message::set('success', 'Đã xóa các user story được chọn.');
+        } else {
+            Message::set('error', 'Hành động không hợp lệ.');
+        }
+
+        redirect('admin-user-stories');
     }
 
     public function formCreate()

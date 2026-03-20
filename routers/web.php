@@ -65,6 +65,7 @@ match ($act) {
   'admin-user-stories-update' => (new UserStoryController())->update(),
   'admin-user-stories-delete' => (new UserStoryController())->delete(),
   'admin-user-stories-toggle' => (new UserStoryController())->toggleStatus(),
+  'admin-user-stories-bulk' => (new UserStoryController())->bulkAction(),
 
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
