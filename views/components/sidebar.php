@@ -54,6 +54,13 @@ $inactiveClass = 'text-gray-400 hover:bg-white/10 hover:text-white';
       <span class="whitespace-nowrap">Kho Hàng</span>
     </a>
 
+    <!-- Quản lý backlog (User Stories) -->
+    <a href="<?= BASE_URL ?>admin-user-stories"
+      class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-xl text-sm transition-colors <?= isActive(['admin-user-stories', 'admin-user-stories-create', 'admin-user-stories-edit'], $currentAct) ? $activeClass : $inactiveClass ?>">
+      <i data-lucide="clipboard" class="w-4 h-4 shrink-0"></i>
+      <span class="whitespace-nowrap">Backlog</span>
+    </a>
+
   </nav>
 
   <!-- Bottom: Đăng xuất -->

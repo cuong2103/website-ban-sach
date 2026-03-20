@@ -57,6 +57,15 @@ match ($act) {
   // ─── Admin: Inventory Management (View Only) ───────────────────────────────────
   'admin-inventories' => (new InventoryController())->list(),
 
+  // ─── Admin: User Story Management (Backlog) ─────────────────────────
+  'admin-user-stories' => (new UserStoryController())->list(),
+  'admin-user-stories-create' => (new UserStoryController())->formCreate(),
+  'admin-user-stories-store' => (new UserStoryController())->create(),
+  'admin-user-stories-edit' => (new UserStoryController())->formEdit(),
+  'admin-user-stories-update' => (new UserStoryController())->update(),
+  'admin-user-stories-delete' => (new UserStoryController())->delete(),
+  'admin-user-stories-toggle' => (new UserStoryController())->toggleStatus(),
+
   // ================================
   // THÊM ROUTES MỚI Ở ĐÂY
   // ================================
