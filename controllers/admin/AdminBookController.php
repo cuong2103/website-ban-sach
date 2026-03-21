@@ -300,11 +300,17 @@ class AdminBookController
 
         $result = $this->bookModel->delete($id);
         if ($result['ok']) {
-            if ($thumbnail) deleteFile($thumbnail);
-            foreach ($gallery as $img) {
-                deleteFile($img['image_url']);
+            if (!empty($result['soft'])) {
+                // Soft delete: sách có trong đơn hàng, chỉ ẩn đi
+                Message::set('success', 'Đã xóa sách "' . $book['title'] . '" khỏi danh sách!');
+            } else {
+                // Hard delete: xóa hẳn
+                if ($thumbnail) deleteFile($thumbnail);
+                foreach ($gallery as $img) {
+                    deleteFile($img['image_url']);
+                }
+                Message::set('success', 'Đã xóa sách "' . $book['title'] . '" thành công!');
             }
-            Message::set('success', 'Đã xóa sách "' . $book['title'] . '" thành công!');
         } else {
             Message::set('error', $result['message']);
         }

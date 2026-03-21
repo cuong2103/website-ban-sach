@@ -193,7 +193,7 @@ class BookModel
         c.name as category_name
       FROM books b
       LEFT JOIN categories c ON b.category_id = c.category_id
-      WHERE 1=1
+      WHERE b.status != -1
     ";
 
     $params = [];
@@ -234,7 +234,7 @@ class BookModel
     $query = "
       SELECT COUNT(*) as total
       FROM books b
-      WHERE 1=1
+      WHERE b.status != -1
     ";
 
     $params = [];
@@ -382,11 +382,26 @@ class BookModel
   public function delete($id)
   {
     try {
-      $stmt = $this->conn->prepare("DELETE FROM books WHERE book_id = :id");
-      $stmt->execute(['id' => $id]);
-      return ['ok' => true, 'message' => 'Xóa sách thành công'];
+      // Kiểm tra sách có nằm trong đơn hàng nào không
+      $checkStmt = $this->conn->prepare("SELECT COUNT(*) as cnt FROM order_items WHERE book_id = :id");
+      $checkStmt->execute(['id' => $id]);
+      $count = (int)$checkStmt->fetch()['cnt'];
+
+      if ($count > 0) {
+        // Sách đang có trong đơn hàng → soft delete (ẩn vĩnh viễn, status = -1)
+        $stmt = $this->conn->prepare("UPDATE books SET status = -1, updated_at = NOW() WHERE book_id = :id");
+        $stmt->execute(['id' => $id]);
+        return ['ok' => true, 'soft' => true, 'message' => 'Sách đã được xóa khỏi danh sách'];
+      } else {
+        // Không có đơn hàng liên quan → xóa hẳn
+        // Xóa ảnh gallery liên quan trước
+        $this->conn->prepare("DELETE FROM book_images WHERE book_id = :id")->execute(['id' => $id]);
+        $stmt = $this->conn->prepare("DELETE FROM books WHERE book_id = :id");
+        $stmt->execute(['id' => $id]);
+        return ['ok' => true, 'soft' => false, 'message' => 'Xóa sách thành công'];
+      }
     } catch (Exception $e) {
-      return ['ok' => false, 'message' => 'Không thể xóa sách này vì đã có đơn hàng hoặc liên kết khác ràng buộc.'];
+      return ['ok' => false, 'message' => 'Đã xảy ra lỗi khi xóa sách: ' . $e->getMessage()];
     }
   }
 
